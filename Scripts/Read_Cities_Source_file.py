@@ -23,8 +23,8 @@ with open(filePath,'r') as file:
             row = line.split(',') #data are imported from a csv with ',' as a separator
             town = row[0]
             townList.append(town)
-	    for i in range(len(townList)) :
-            	townMatrix[town].update((townList[i],row[i]))
+            # for i in range(len(townList)) :
+            #     townMatrix[town].update((townList[i],row[i]))
 
             #print(line)
             #beware, there are 3 extra columns for Stockholm, Vienna and Warsaw
