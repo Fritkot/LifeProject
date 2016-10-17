@@ -137,4 +137,3 @@ nbVilles = 0 #on séléctionne toutes les villes
 graine = 1 #on fige la graine pour toujours avoir la même séquence de nb pseudo-aléatoire dans le cadre de tests du code
 villes = selectionAleaVille(villes, nbVilles,graine)
 
-
