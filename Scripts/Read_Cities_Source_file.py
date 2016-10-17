@@ -49,13 +49,6 @@ def importDonnéesSources(cheminFichier):
     # print(townList)
     # print(townMatrix.keys())
 
-    # graphe = dict() #dictionnaire avec un couple de ville comme clef
-    # #construisons le graphe
-    # for ligne in townMatrix.keys():
-    #     for colonne in townMatrix.keys():
-    #         graphe[(ligne,colonne)]=townMatrix[ligne][townList.index(colonne)]
-    # print(graphe[(townList[0],townList[2])])
-
     graphe = dict() #dictionnaire avec un couple de ville comme clef
     #construisons le graphe
     for ligne in townMatrix.keys():
@@ -95,9 +88,53 @@ def triePlusPetiteVille(ville1,ville2):
         return (ville1,ville2)
 
 
+def selectionAleaVille(villes,nbVille=0,graine=0):
+    """
+    Selectionne aleatoirement et uniformément un certain nombre de ville dans une liste de ville.
+    
+    La graine du generateur de nombre pseudo-aleatoire n'est pas fixe. 
+    
+    Parametres :
+        villes  : la liste des villes parmis lesquelles la selection est realisee.
+            type : list
+            
+        nbVille : le nombre de ville a selectionner, par default toutes les villes sont selectionnees.
+            type : int
+        graine : la graine du generateur de nombre pseudo-aleatoire. La graine est par defaut fixee sur l'horloge du processeur. Si on veut la fixer (pour des tests par exemple), il faut indiquer une graine.
+            type : float/int/long
+    
+    return : la liste des villes selectionnees au hasard
+        type : list
+        
+    
+    """
+    if nbVille > len(villes):
+        raise(InputError('Le nombre de ville a selectionner ne peut exceder le nombre de ville dans la liste de ville a selectionner'))
+    
+    if (nbVille == 0) or (nbVille == len(villes)):
+        return villes
+    
+    if nbVille < 0:
+        raise InputError('Le nombre de ville a selectionner ne peut etre negatif.')
+    
+    from random import sample
+    from random import seed
+    
+    if graine != 0:
+        seed(graine)
+    
+    return sample(villes,nbVille)
+
+
 ## script principal
 
+#import de données sources des villes
 fichier = '../Inputs/Distances.csv'
-
 graph,villes = importDonnéesSources(fichier)
+
+#séléction aléatoire d'un certain nombre de ville
+nbVilles = 0 #on séléctionne toutes les villes
+graine = 1 #on fige la graine pour toujours avoir la même séquence de nb pseudo-aléatoire dans le cadre de tests du code
+villes = selectionAleaVille(villes, nbVilles,graine)
+
 
