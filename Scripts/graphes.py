@@ -1,5 +1,6 @@
 """
 Ce script va contenir toutes les methodes relatives aux graphes:
+    - trie des arretes
     - Union-Find
     - Kruskal
     - ...
@@ -28,32 +29,55 @@ def trieGraphe(graphe,ascendant=True):
     clefsTriees = sorted(clefs , key = itemgetter(1),reverse=not(ascendant))
     return clefsTriees
 
-
-def creerForetVierge(arretes):
+def extraitListNoeuds(graphe):
     """
-    creer une foret a partir de la liste des arbres.
-    Une arrete correspondant a un couple d'arbre (ou de ville)
+    extrait la liste des noeuds du graphes passé en parametre
     
     parametre :
-        arretes: liste des arretes (ie tuple de ville)
-            type liste
+        - graphe : graphe représenté par un dictionnaire avec un couple de ville (noeuds) comme clefs
+            type : dictionnaire
+    return : la liste des noeuds (villes) du graphes
+        type : list
+    
+    ex:
+        - graphe = {('Brussels', 'Rome'): 1171.34, ('Bucharest', 'Hamburg'): 1544.17, ('Brussels', 'Bucharest'): 1769.69, ('Berlin', 'Hamburg'): 254.51, ('Hamburg', 'Rome'): 1307.51, ('Bucharest', 'Rome'): 1137.38, ('Berlin', 'Bucharest'): 1293.4, ('Brussels', 'Hamburg'): 489.76, ('Berlin', 'Brussels'): 651.62, ('Berlin', 'Rome'): 1181.67}
+        - extraitListNoeuds(graphe) => ['Brussels', 'Rome', 'Bucharest', 'Hamburg', 'Berlin']
+    
+    """
+    liste = list()
+    
+    for arbre in graphe.keys():
+        origine = arbre[0]
+        destination = arbre[1]
+        if not(origine in liste):
+            liste.append(origine)
+        if not(destination in liste):
+            liste.append(destination)
+    
+    return liste
+
+
+
+def creerForetVierge(listeArbres):
+    """
+    creer une foret a partir de la liste des arbres ou noeuds d'un graphe.
+    
+    parametre :
+        listeArbres: liste des arbres (ie noeuds du graphe : nom de ville)
+            type list
     return : un dictionnaire avec comme clef l'arbre ou ville et comme elements un tuple compose de son pere et de son rang initialise a 0
         type : dictionnaire
         
     ex:
-        - sousGraphe = {('Brussels', 'Rome'): 1171.34, ('Brussels', 'Bucharest'): 1769.69, ('Berlin', 'Bucharest'): 1293.4, ('Bucharest', 'Hamburg'): 1544.17, ('Berlin', 'Hamburg'): 254.51, ('Berlin', 'Rome'): 1181.67, ('Brussels', 'Hamburg'): 489.76, ('Hamburg', 'Rome'): 1307.51, ('Berlin', 'Brussels'): 651.62, ('Bucharest', 'Rome'): 1137.38}
-        - creerForetVierge(sousGraphe) => {'Bucharest': ('Bucharest', 0), 'Brussels': ('Brussels', 0), 'Rome': ('Rome', 0), 'Hamburg': ('Hamburg', 0), 'Berlin': ('Berlin', 0)}
+        - villes = ['Bucharest', 'Rome', 'Berlin', 'Hamburg', 'Brussels']
+        - creerForetVierge(villes) => {'Brussels': ('Brussels', 0), 'Hamburg': ('Hamburg', 0), 'Berlin': ('Berlin', 0), 'Rome': ('Rome', 0), 'Bucharest': ('Bucharest', 0)}
     """
     
     foret = dict()
     
-    for arbre in arretes:
-        origine = arbre[0]
-        destination = arbre[1]
-        if not(origine in foret.keys()):
-            foret[origine]=(origine,0)
-        if not(destination in foret.keys()):
-            foret[destination] = (destination,0)
+    for arbre in listeArbres:
+        if not(arbre in foret.keys()):
+            foret[arbre]=(arbre,0)
     
     return foret
   
@@ -70,8 +94,8 @@ def find(arbre,foret):
         type : tuple
         
     ex:
-    - foret = {'Bucharest': ('Bucharest', 0), 'Brussels': ('Rome', 0), 'Rome': ('Rome', 0), 'Hamburg': ('Hamburg', 0), 'Berlin': ('Berlin', 0)}
-    - find('Brussels',foret) => ('Rome', 0)
+    - foret = {'Bucharest': ('Bucharest', 0), 'Brussels': ('Rome', 0), 'Rome': ('Hamburg', 0), 'Hamburg': ('Hamburg', 0), 'Berlin': ('Berlin', 0)}
+    - find('Brussels',foret) => ('Hamburg', 0)
     """
     
     if foret[arbre][0]==arbre:
@@ -87,10 +111,10 @@ def union(arbre1,arbre2,foret):
     
     if pereArbre1[0] != pereArbre2[0]:
         if pereArbre1[1] < pereArbre2[1]:
-            foret[pereArbre1] = pereArbre2
+            foret[arbre1] = pereArbre2
         else:
-            foret[pereArbre2] = pereArbre1
+            foret[arbre2] = pereArbre1
             if pereArbre1[1] == pereArbre2[1]:
-                foret[pereArbre1][1] = pereArbre1[1]+1
+                foret[arbre1][1] = pereArbre1[1]+1
                 
     return foret

@@ -22,5 +22,5 @@ graine = 1 #on fige la graine pour toujours avoir la même séquence de nb pseud
 villes = selectionAleaVille(listVilles, nbVilles,graine)
 sousGraphe = extraitSousGraphe(graphe,villes)
 
-foretVierge = creerForetVierge(sousGraphe)
+foretVierge = creerForetVierge(villes)
 union('Brussels','Rome',foretVierge)
