@@ -14,16 +14,17 @@ def importDonnéesSources(cheminFichier):
     
     exemple :
         dictionnire : {('Barcelona', 'Belgrade'): 1528.13, ('Belgrade', 'Istanbul'): 809.48}
-        liste       : ['Barcelona', 'Belgrade']
+        liste       : ['Barcelona', 'Belgrade','Istanbul']
     """
     
-    
-    #set current working directory
-    from sys import path
-    from os import chdir
     import csv
     
-    chdir(path[0])
+    #set current working directory
+    # from sys import path
+    # from os import chdir
+    # import csv
+    # 
+    # chdir(path[0])
     
     townMatrix = dict() #stores all the cities with the distance between the other cities
     townList = list()
@@ -125,15 +126,26 @@ def selectionAleaVille(villes,nbVille=0,graine=0):
     
     return sample(villes,nbVille)
 
-
-## script principal
-
-#import de données sources des villes
-fichier = '../Inputs/Distances.csv'
-graph,villes = importDonnéesSources(fichier)
-
-#séléction aléatoire d'un certain nombre de ville
-nbVilles = 0 #on séléctionne toutes les villes
-graine = 1 #on fige la graine pour toujours avoir la même séquence de nb pseudo-aléatoire dans le cadre de tests du code
-villes = selectionAleaVille(villes, nbVilles,graine)
-
+def extraitSousGraphe(graphe,listVilles):
+    """
+    extrait un sous-graphe a partir de graphe correspondant a la listVille
+    
+    Parametres:
+        graphe : un dictionnaire qui represente un graphe.
+            type : dictionnaire
+        listVille : la liste des villes a extraire
+            type : list
+        return : graphe correspondant a la liste en parametres
+            type : dictionnaire
+    """
+    
+    sousGraphe = dict()
+    
+    for v1 in listVilles:
+        for v2 in listVilles:
+            if v1 != v2:
+                villesTriees = triePlusPetiteVille(v1,v2)
+                if not(villesTriees in sousGraphe.keys()):
+                    sousGraphe[villesTriees] = graphe[villesTriees]
+    
+    return sousGraphe
