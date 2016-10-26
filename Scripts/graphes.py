@@ -65,7 +65,7 @@ def creerForetVierge(listeArbres):
     parametre :
         listeArbres: liste des arbres (ie noeuds du graphe : nom de ville)
             type list
-    return : un dictionnaire avec comme clef l'arbre ou ville et comme elements un tuple compose de son pere et de son rang initialise a 0
+    return : un dictionnaire avec comme clef l'arbre ou ville et comme elements un couple compose de son pere et de son rang initialise a 0 (tableau à 2 elements)
         type : dictionnaire
         
     ex:
@@ -77,7 +77,7 @@ def creerForetVierge(listeArbres):
     
     for arbre in listeArbres:
         if not(arbre in foret.keys()):
-            foret[arbre]=(arbre,0)
+            foret[arbre]=[arbre,0]
     
     return foret
   
@@ -90,8 +90,8 @@ def find(arbre,foret):
             type : string
         - foret : l'ensemble des arbres avec leurs aieux respectifs
             type : dictionnaire
-    return : (pere,rang) de l'arbre
-        type : tuple
+    return : [pere,rang] de l'arbre
+        type : tableau a 2 elements
         
     ex:
     - foret = {'Bucharest': ('Bucharest', 0), 'Brussels': ('Rome', 0), 'Rome': ('Hamburg', 0), 'Hamburg': ('Hamburg', 0), 'Berlin': ('Berlin', 0)}
@@ -111,10 +111,10 @@ def union(arbre1,arbre2,foret):
     
     if pereArbre1[0] != pereArbre2[0]:
         if pereArbre1[1] < pereArbre2[1]:
-            foret[arbre1] = pereArbre2
+            foret[arbre1] = [pereArbre2[0],pereArbre1[1]] #sinon quand foret[arbre1] est maj, foret[arbre2] l'est aussi. Les variables sont passées par référence en Python et non par valeur
         else:
-            foret[arbre2] = pereArbre1
+            foret[arbre2] = [pereArbre1[0],pereArbre2[1]]
             if pereArbre1[1] == pereArbre2[1]:
-                foret[arbre1][1] = pereArbre1[1]+1
+                foret[arbre1][1] += 1
                 
     return foret

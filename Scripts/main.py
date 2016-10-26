@@ -6,6 +6,7 @@ chdir(path[0])
 
 ##import des scripts
 from Read_Cities_Source_file import *
+from graphes import *
 #C:\Users\Joe\Documents\GitHub\LifeProject\Scripts\Read_Cities_Source_file.py
 
 
