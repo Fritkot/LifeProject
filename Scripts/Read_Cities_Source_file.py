@@ -126,6 +126,7 @@ def selectionAleaVille(villes,nbVille=0,graine=0):
     
     return sample(villes,nbVille)
 
+
 def extraitSousGraphe(graphe,listVilles):
     """
     extrait un sous-graphe a partir de graphe correspondant a la listVille

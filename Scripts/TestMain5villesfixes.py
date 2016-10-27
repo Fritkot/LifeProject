@@ -25,4 +25,7 @@ sousGraphe = extraitSousGraphe(graphe,villes)
 foretVierge = creerForetVierge(villes)
 union('Brussels','Rome',foretVierge)
 union('Brussels','Bucharest',foretVierge)
+union('Hamburg','Berlin',foretVierge)
 union('Berlin','Rome',foretVierge)
+
+acm = kruskall(sousGraphe)

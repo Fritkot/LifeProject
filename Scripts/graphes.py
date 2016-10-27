@@ -1,9 +1,8 @@
+## Méthodes relatives aux Graphes
 """
-Ce script va contenir toutes les methodes relatives aux graphes:
+Cette section va contenir toutes les methodes relatives aux graphes:
     - trie des arretes
-    - Union-Find
-    - Kruskal
-    - ...
+    - extraire la liste des noeuds à partir d'un graphe
 """
 
 def trieGraphe(graphe,ascendant=True):
@@ -16,7 +15,7 @@ def trieGraphe(graphe,ascendant=True):
             ascendant : indique si le trie est ascendant ou descendant
                 type : booleen
         return : graph trie
-            type : list
+            type : list (si on renvoit un ditionnaire, l'ordre des arretes n'est plus garantie)
             
         ex:
         graphe = {('Berlin', 'Brussels'): 651.62, ('Brussels', 'Hamburg'): 489.76, ('Bucharest', 'Hamburg'): 1544.17, ('Brussels', 'Bucharest'): 1769.69, ('Berlin', 'Rome'): 1181.67, ('Berlin', 'Hamburg'): 254.51, ('Berlin', 'Bucharest'): 1293.4, ('Bucharest', 'Rome'): 1137.38, ('Hamburg', 'Rome'): 1307.51, ('Brussels', 'Rome'): 1171.34}
@@ -58,6 +57,9 @@ def extraitListNoeuds(graphe):
 
 
 
+
+## méthodes pour l'agorithme de l'Union-Find
+
 def creerForetVierge(listeArbres):
     """
     creer une foret a partir de la liste des arbres ou noeuds d'un graphe.
@@ -77,7 +79,7 @@ def creerForetVierge(listeArbres):
     
     for arbre in listeArbres:
         if not(arbre in foret.keys()):
-            foret[arbre]=[arbre,0]
+            foret[arbre]=[arbre,1]
     
     return foret
   
@@ -104,17 +106,79 @@ def find(arbre,foret):
     
 def union(arbre1,arbre2,foret):
     """
-    
+    fusionne deux arbres dans une foret.
+    La fusion se déroule comme suit:
+        on regarde l'aieul de chaque arbre:
+            - si aieul(arbre1) == aieul(arbre2) 
+                alors les arbres sont deja connectes dans la foret
+            - sinon
+                - on affecte l'arbre avec l'aieul de rang le plus grand à l'autre arbre.
+        
     """
     pereArbre1 = find(arbre1,foret)
     pereArbre2 = find(arbre2,foret)
     
-    if pereArbre1[0] != pereArbre2[0]:
-        if pereArbre1[1] < pereArbre2[1]:
-            foret[arbre1] = [pereArbre2[0],pereArbre1[1]] #sinon quand foret[arbre1] est maj, foret[arbre2] l'est aussi. Les variables sont passées par référence en Python et non par valeur
-        else:
-            foret[arbre2] = [pereArbre1[0],pereArbre2[1]]
-            if pereArbre1[1] == pereArbre2[1]:
-                foret[arbre1][1] += 1
-                
+    if pereArbre1[0] != pereArbre2[0]: # test si les deux arbres ont des aieux differents
+         #test les rangs des arbres aieux
+        if pereArbre1[1] < pereArbre2[1]: # cas ou rang(arbre1) < rang(arbre2)
+            
+            foret[pereArbre1[0]][0] = pereArbre2[0]
+            foret[pereArbre2[0]][1] += foret[arbre1][1]
+            
+        elif pereArbre1[1] > pereArbre2[1]: # cas ou rang(arbre1 > rang(arbre2)
+            
+            foret[pereArbre2[0]][0] = pereArbre1[0]#,pereArbre2[1]]
+            foret[pereArbre1[0]][1] += foret[arbre2][1]
+        
+        else: #cas ou les rangs sont egaux : pereArbre1[1] == pereArbre2[1]:
+                foret[pereArbre2[0]][0] = pereArbre1[0] #arbitrairement on selectionne l'arbre1 comme aieul
+                foret[pereArbre1[0]][1] += foret[arbre2][1]
+            
     return foret
+
+## Algorithme d'arbre couvrant de poids minimum
+
+def kruskall(graphe):
+    """
+    algorithme de Kruskall qui cherche un arbre couvrant de poids minimal qui suit le principe suivant :
+        1) trier le graphe par ordre decroissant des poids des arretes
+        2) prendre chaque arrete par ordre croissant suivant les critres:
+            - si l'arrete a deja ete prise en compte, la rejeter
+            - si la nouvelle arrete forme un cycle alors la rejeter
+    l'algorithme utilise le principe de l'Union-Find.
+    
+    parametres :
+        - graphe : graphe sur lequel on cherche un arbre couvrant de poids minimum
+            type: dictionnaire
+    
+    return : arbre couvrant de poids minimum
+        type : dictionnaire
+    
+    ex:
+        graphe = {('Berlin', 'Bucharest'): 1293.4, ('Brussels', 'Bucharest'): 1769.69, ('Hamburg', 'Rome'): 1307.51, ('Bucharest', 'Rome'): 1137.38, ('Berlin', 'Rome'): 1181.67, ('Berlin', 'Hamburg'): 254.51, ('Brussels', 'Hamburg'): 489.76, ('Bucharest', 'Hamburg'): 1544.17, ('Brussels', 'Rome'): 1171.34, ('Berlin', 'Brussels'): 651.62}
+        kruskall(graphe) = {('Berlin', 'Hamburg'): 254.51, ('Brussels', 'Hamburg'): 489.76, ('Bucharest', 'Rome'): 1137.38, ('Brussels', 'Rome'): 1171.34}
+    """
+    acm = dict() #acm = arbre couvrant minimum
+    
+    #creons une foret vierge a partir des noeuds de graphe
+    foretVierge = creerForetVierge(extraitListNoeuds(graphe))
+    
+    #trions les arretes de graphe
+    grapheTrie = trieGraphe(graphe)
+    
+    for arrete in grapheTrie:
+        #grapheTrie est de la forme: [(('Berlin', 'Hamburg'), 254.51)]
+        #arrete est de la forme : (('Berlin', 'Hamburg'), 254.51)
+        noeud1 = arrete[0][0] #ie Berlin
+        noeud2 = arrete[0][1] #ie Hamburg
+        
+        if find(noeud1,foretVierge) != find(noeud2,foretVierge):
+            # ajout de l'arrete à acm
+            acm[arrete[0]] = arrete[1]
+            
+            union(noeud1,noeud2,foretVierge)
+    return acm
+
+    
+    
+    
