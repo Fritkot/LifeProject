@@ -13,11 +13,13 @@ from graphes import *
 ## script principal
 
 #chargement de données sources des villes
-fichier = '../Inputs/Distances.csv'
+#fichier = '../Inputs/Distances.csv'
+fichier = '../Inputs/GrapheTestProf.csv'
 graph,listVilles = importDonnéesSources(fichier)
 
-#séléction aléatoire d'un certain nombre de ville
-nbVilles = 0 #on séléctionne toutes les villes
-graine = 1 #on fige la graine pour toujours avoir la même séquence de nb pseudo-aléatoire dans le cadre de tests du code
-villes = selectionAleaVille(listVilles, nbVilles,graine)
+# #séléction aléatoire d'un certain nombre de ville
+# nbVilles = 0 #on séléctionne toutes les villes
+# graine = 1 #on fige la graine pour toujours avoir la même séquence de nb pseudo-aléatoire dans le cadre de tests du code
+# villes = selectionAleaVille(listVilles, nbVilles,graine)
 
+acm=kruskall(graph)

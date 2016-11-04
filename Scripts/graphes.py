@@ -62,17 +62,17 @@ def extraitListNoeuds(graphe):
 
 def creerForetVierge(listeArbres):
     """
-    creer une foret a partir de la liste des arbres ou noeuds d'un graphe.
+    creer une foret a partir de la liste des noeuds d'un graphe.
     
     parametre :
-        listeArbres: liste des arbres (ie noeuds du graphe : nom de ville)
+        listeSommets: liste des sommets (ie noeuds du graphe : nom de ville)
             type list
-    return : un dictionnaire avec comme clef l'arbre ou ville et comme elements un couple compose de son pere et de son rang initialise a 0 (tableau à 2 elements)
+    return : un dictionnaire avec comme clef le sommet ou ville et comme elements un couple compose de son aieul et de son rang initialise a 1 (tableau à 2 elements)
         type : dictionnaire
         
     ex:
         - villes = ['Bucharest', 'Rome', 'Berlin', 'Hamburg', 'Brussels']
-        - creerForetVierge(villes) => {'Brussels': ('Brussels', 0), 'Hamburg': ('Hamburg', 0), 'Berlin': ('Berlin', 0), 'Rome': ('Rome', 0), 'Bucharest': ('Bucharest', 0)}
+        - creerForetVierge(villes) => {'Brussels': ('Brussels', 1), 'Hamburg': ('Hamburg', 1), 'Berlin': ('Berlin', 1), 'Rome': ('Rome', 1), 'Bucharest': ('Bucharest', 1)}
     """
     
     foret = dict()
@@ -83,56 +83,51 @@ def creerForetVierge(listeArbres):
     
     return foret
   
-def find(arbre,foret):
+def find(sommet,foret):
     """
-    cherche le parent de l'arbre
+    cherche l'ancetre du sommet
     
     parametres :
-        - arbre : l'arbre dont on cherche son aieul
+        - sommet : le sommet dont on cherche l'aieul
             type : string
-        - foret : l'ensemble des arbres avec leurs aieux respectifs
+        - foret : l'ensemble de sommets avec leurs aieux et leurs poids respectifs
             type : dictionnaire
-    return : [pere,rang] de l'arbre
-        type : tableau a 2 elements
+    return : l'aieul du sommet
+        type : string
         
     ex:
     - foret = {'Bucharest': ('Bucharest', 0), 'Brussels': ('Rome', 0), 'Rome': ('Hamburg', 0), 'Hamburg': ('Hamburg', 0), 'Berlin': ('Berlin', 0)}
-    - find('Brussels',foret) => ('Hamburg', 0)
+    - find('Brussels',foret) => 'Hamburg'
     """
     
-    if foret[arbre][0]==arbre:
-        return foret[arbre]
-    return find(foret[arbre][0],foret)
+    if foret[sommet][0]==sommet:
+        return foret[sommet][0]
+    return find(foret[sommet][0],foret)
     
-def union(arbre1,arbre2,foret):
+def union(sommet1,sommet2,foret):
     """
-    fusionne deux arbres dans une foret.
+    fusionne deux sommets dans une foret.
     La fusion se déroule comme suit:
-        on regarde l'aieul de chaque arbre:
-            - si aieul(arbre1) == aieul(arbre2) 
+        on regarde l'aieul de chaque sommet:
+            - si aieul(sommet1) == aieul(sommet2) 
                 alors les arbres sont deja connectes dans la foret
             - sinon
-                - on affecte l'arbre avec l'aieul de rang le plus grand à l'autre arbre.
+                - on affecte le sommet avec l'aieul de rang le plus grand à l'autre sommet.
         
     """
-    pereArbre1 = find(arbre1,foret)
-    pereArbre2 = find(arbre2,foret)
+    aieul1 = find(sommet1,foret)
+    aieul2 = find(sommet2,foret)
     
-    if pereArbre1[0] != pereArbre2[0]: # test si les deux arbres ont des aieux differents
+    if aieul1 != aieul2: # test si les deux arbres ont des aieux differents
          #test les rangs des arbres aieux
-        if pereArbre1[1] < pereArbre2[1]: # cas ou rang(arbre1) < rang(arbre2)
+        if foret[aieul1][1] < foret[aieul2][1]: # cas ou rang(sommet1) < rang(sommet2)
             
-            foret[pereArbre1[0]][0] = pereArbre2[0]
-            foret[pereArbre2[0]][1] += foret[arbre1][1]
+            foret[sommet1][0] = aieul2
+            foret[aieul2][1] += foret[aieul1][1]
             
-        elif pereArbre1[1] > pereArbre2[1]: # cas ou rang(arbre1 > rang(arbre2)
-            
-            foret[pereArbre2[0]][0] = pereArbre1[0]#,pereArbre2[1]]
-            foret[pereArbre1[0]][1] += foret[arbre2][1]
-        
-        else: #cas ou les rangs sont egaux : pereArbre1[1] == pereArbre2[1]:
-                foret[pereArbre2[0]][0] = pereArbre1[0] #arbitrairement on selectionne l'arbre1 comme aieul
-                foret[pereArbre1[0]][1] += foret[arbre2][1]
+        else: # cas rang(sommet1) > rang(sommet2) ou les rangs sont egaux : foret[aieul1][1] == foret[aieul2][1]:
+            foret[sommet2][0] = aieul1 # arbitrairement on selectionne le sommet1 comme aieul
+            foret[aieul1][1] += foret[aieul2][1]
             
     return foret
 
@@ -177,7 +172,7 @@ def kruskall(graphe):
             acm[arrete[0]] = arrete[1]
             
             union(noeud1,noeud2,foretVierge)
-    return acm
+    return acm,foretVierge
 
     
     
