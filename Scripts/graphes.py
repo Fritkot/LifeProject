@@ -101,7 +101,7 @@ def find(sommet,foret):
     """
     
     if foret[sommet][0]==sommet:
-        return foret[sommet][0]
+        return sommet
     return find(foret[sommet][0],foret)
     
 def union(sommet1,sommet2,foret):
@@ -122,14 +122,14 @@ def union(sommet1,sommet2,foret):
          #test les rangs des arbres aieux
         if foret[aieul1][1] < foret[aieul2][1]: # cas ou rang(sommet1) < rang(sommet2)
             
-            foret[sommet1][0] = aieul2
+            foret[aieul1][0] = aieul2
             foret[aieul2][1] += foret[aieul1][1]
             
         else: # cas rang(sommet1) > rang(sommet2) ou les rangs sont egaux : foret[aieul1][1] == foret[aieul2][1]:
-            foret[sommet2][0] = aieul1 # arbitrairement on selectionne le sommet1 comme aieul
+            foret[aieul2][0] = aieul1 # arbitrairement on selectionne l'aieul du sommet1 comme aieul
             foret[aieul1][1] += foret[aieul2][1]
             
-    return foret
+    return 
 
 ## Algorithme d'arbre couvrant de poids minimum
 
