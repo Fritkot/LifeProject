@@ -5,6 +5,28 @@ Cette section va contenir toutes les methodes relatives aux graphes:
     - extraire la liste des noeuds à partir d'un graphe
 """
 
+def creerArete(noeud1,noeud2):
+    """
+    cree une arete a partir de deux noeuds.
+    L'arete est representee par un tuple dont le premier element est le noeud le plus petit dans le sens lexicographique
+    
+    parametre :
+        - noeud1 : premier noeud
+            type : string
+        - noeud2 : deuxieme noeud
+    
+    return un tuple (noeud1, noeud2) si noeud1 <= noeud2, sinon (noeud2,noeud1)
+    
+    ex:
+    creerArete('B','A') => ('A', 'B')
+    """
+    
+    if noeud1 <= noeud2:
+        return (noeud1,noeud2)
+    else:
+        return (noeud2,noeud1)
+
+
 def trieGraphe(graphe,ascendant=True):
     """
         trie un graphe par valeur ascendante (par defaut) ou descendante des poids des arrêtes.
@@ -56,8 +78,99 @@ def extraitListNoeuds(graphe):
     return liste
 
 
+def calculerDegreNoeuds(graphe):
+    """
+    Calcul le degre de chaque noeud du graphe
+    
+    parametre :
+        - graphe : un graphe non-oriente
+            type : dictionnaire de la forme : {('noeud1','noeud2') : poids}
+                    le premier element du tuple est le plus petit noeud dans l'ordre lexicographique
+    return : le degre de chaque noeud du graphe en parametre
+        type : dictionnaire ou la clef est le nom du noeud et son degre : {"noeud":degre}
+        
+    ex:
+        graphe = {('B', 'F'): 4.0, ('A', 'F'): 3.0, ('D', 'F'): 50.0, ('D', 'E'): 2.0, ('C', 'E'): 1.0}
+        calculerDegreNoeuds(graphe) => {'E': 2, 'A': 1, 'D': 2, 'C': 1, 'F': 3, 'B': 1}
+    
+    """
+    listNoeuds = extraitListNoeuds(graphe)
+    
+    degres = dict()
+    
+    for noeudOrigine in listNoeuds:
+        degres[noeudOrigine] = 0 #initialisation du dictionnaire
+        
+        for noeudArrivee in listNoeuds:
+            if noeudOrigine != noeudArrivee:
+                #trie lexicographique des noms de noeuds
+                couple = creerArete(noeudOrigine,noeudArrivee)
+                if graphe.get(couple) is not None:
+                    degres[noeudOrigine] += 1
+    
+    return degres
 
 
+def selectionNoeudsParite(graphe,pair=True):
+    """
+    extrait uniquement les noeuds de degre pair (par defaut) ou impair du graphe
+    parametre :
+        - graphe : un graphe non-oriente
+            type : dictionnaire de la forme : {('noeud1','noeud2') : poids}
+                    le premier element du tuple est le plus petit noeud dans l'ordre lexicographique
+        - pair : indique si uniquement les noeuds de degre pair sont regardés ou les noeuds de degre impairs. Par defaut, la methode ne selectionne que les noeuds de degre pair
+            type : booleen
+    return : la liste des noeuds de degre impair
+        type : liste
+    ex:
+    graphe = {('D', 'F'): 50.0, ('C', 'E'): 1.0, ('A', 'F'): 3.0, ('B', 'F'): 4.0, ('D', 'E'): 2.0}
+    selectionNoeudParite(graphe) => ['E', 'D']
+    """
+    resultat = list()
+    
+    #calcul des degres de chaque noeud du graphe
+    degresNoeuds = calculerDegreNoeuds(graphe)
+    
+    if pair:
+        for noeud in degresNoeuds.keys():
+            if degresNoeuds.get(noeud)%2 == 0: #selection degre pair
+                resultat.append(noeud)
+    else:
+        for noeud in degresNoeuds.keys():
+            if degresNoeuds.get(noeud)%2 == 1: #selection degre impair
+                resultat.append(noeud)
+    
+    return resultat
+   
+def extraireSousGraphe(graphe,listeNoeuds):
+    """
+    extrait un sous-graphe a partir d'une liste de noeuds
+    
+    parametre :
+        - graphe : un graphe non-oriente
+            type : dictionnaire de la forme : {('noeud1','noeud2') : poids}
+                    le premier element du tuple est le plus petit noeud dans l'ordre lexicographique 
+        - listeNoeuds : liste des noeuds a extraire du graphe
+            type : liste
+    return un sous-graphe issu de graphe n'ayant comme noeuds que les noeuds de listeNoeuds
+        type :  dictionnaire de la forme : {('noeud1','noeud2') : poids}
+                    le premier element du tuple est le plus petit noeud dans l'ordre lexicographique 
+                    
+    ex:
+    graphe = {('D', 'E'): 2.0, ('B', 'F'): 4.0, ('A', 'B'): 1000.0, ('C', 'F'): 200.0, ('C', 'E'): 1.0, ('C', 'D'): 300.0, ('B', 'D'): 100.0, ('D', 'F'): 50.0, ('A', 'F'): 3.0}
+    extraireSousGraphe(graphe) => {('C', 'F'): 200.0, ('B', 'F'): 4.0, ('A', 'B'): 1000.0, ('A', 'F'): 3.0}
+    """
+    newGraph= dict()
+    
+    for noeudOrigine in listeNoeuds:
+        for noeudArrivee in listeNoeuds:
+            arete = creerArete(noeudOrigine,noeudArrivee)
+            #test si l'arete existe dans graphe
+            if graphe.get(arete) is not None:
+                newGraph[arete] = graphe.get(arete)
+    return newGraph
+    
+    
 ## méthodes pour l'agorithme de l'Union-Find
 
 def creerForetVierge(listeArbres):
@@ -172,7 +285,7 @@ def kruskall(graphe):
             acm[arrete[0]] = arrete[1]
             
             union(noeud1,noeud2,foretVierge)
-    return acm,foretVierge
+    return acm
 
     
     

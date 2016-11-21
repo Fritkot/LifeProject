@@ -22,4 +22,17 @@ graph,listVilles = importDonnéesSources(fichier)
 # graine = 1 #on fige la graine pour toujours avoir la même séquence de nb pseudo-aléatoire dans le cadre de tests du code
 # villes = selectionAleaVille(listVilles, nbVilles,graine)
 
-acm=kruskall(graph)
+## algorithme de Kristofides
+#1)  Calculer un arbre couvrant de poids minimum : acm
+acm = kruskall(graph)
+
+#2) Calculer l'ensemble I des noeuds de degres impairs de acm
+noeudsImpairs =  selectionNoeudsParite(acm,False) #False car on regrade uniquement les noeuds impairs
+
+#3) calculer le graphe induit par I a partir de graphe
+grapheInduit = extraireSousGraphe(graph,noeudsImpairs)
+
+#TODO calculer couplage parfait de poids minimum
+#TODO Union de acm et du couplage
+#TODO calculer le tour eulerien
+#TODO en deduire le chemin Hamiltonien
