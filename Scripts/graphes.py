@@ -141,6 +141,31 @@ def selectionNoeudsParite(graphe,pair=True):
                 resultat.append(noeud)
     
     return resultat
+
+def extraireAretesDepuisNoeuds(graphe, noeud):
+    """
+    extrait les aretes adjacente au noeud en parametre
+    
+    parametre:
+        - graphe : un graphe non-oriente
+            type : dictionnaire de la forme : {('noeud1','noeud2') : poids}
+                    le premier element du tuple est le plus petit noeud dans l'ordre lexicographique 
+        - noeud : le noeud depuis lequel on extrait les aretes
+            type : string
+    return : list des aretes sous forme de couple
+        type: list()
+    """
+    
+    arete=list()
+    listeNoeuds = extraitListNoeuds(graphe)
+    
+    for n in listeNoeuds:
+        ar = creerArete(noeud,n)
+        if ar in graphe.keys():
+            arete.append(ar)
+    
+    return arete
+    
    
 def extraireSousGraphe(graphe,listeNoeuds):
     """
@@ -287,6 +312,127 @@ def kruskall(graphe):
             union(noeud1,noeud2,foretVierge)
     return acm
 
+##Algorithme concernant les graphes biparti
+#TODO écrire un parcours en profondeur d'un graphe
+
+def parcoursProfondeur(graphe, noeudDepart):
+    """
+    Parcours en profondeur d'un graphe
+    
+    parametre :
+        -graphe : un graphe non-oriente
+            type : dictionnaire de la forme : {('noeud1','noeud2') : poids}
+                    le premier element du tuple est le plus petit noeud dans l'ordre lexicographique
+        
+    return liste des noeuds dans l'ordre du parcours en largeur. Chaque element correspond a un niveau
+        type : list()
+    
+    ex:
+    graphe = {('A', 'F'): 3.0, ('C', 'F'): 200.0, ('A', 'B'): 1000.0, ('B', 'F'): 4.0}
+    parcoursProfondeur(graphe, 'A') => [['A'], ['F', 'B'], ['C'], []]
+    """    
+    listeNoeud = extraitListNoeuds(graphe)
+    
+    #initialisation des noeuds, pour le moment aucun noeud n'a ete visite
+    estVisite = dict()
+    for node in listeNoeud : 
+        estVisite[node] = False
+    estVisite[noeudDepart] = True
+    
+    #creons la file des noeuds a visiter
+    #chaque element de file est une liste de noeuds qui correspond au niveau du noeud dans le parcours en largeur
+    file = list()
+    file.append([noeudDepart]) #le noeud de depart est au niveau 0
+    
+    niveau = 0
+    while len(file[niveau])>0 : #tant que la file des noeuds encore a explorer n'est pas vide
+
+        # creons un nouveau niveau d'exploration
+        file.append(list())
+        
+        #parcourons les noeuds
+        for noeud in file[niveau]:
+            for arete in extraireAretesDepuisNoeuds(graphe,noeud):
+                
+                #testons si l'autre extremite de l'arete a deja ete visitee
+                if arete[0] == noeud:
+                    extremite = 1
+                else:
+                    extremite = 0
+                noeudArrivee = arete[extremite]
+                
+                if estVisite.get(noeudArrivee) == False:
+                    estVisite[noeudArrivee] = True
+                    #ajout du nouveau noeud a la liste des noeuds en attente d'exploration
+                    file[niveau+1].append(noeudArrivee)
+        niveau += 1
+    
+    return file
     
     
     
+def estGrapheBiparti(graphe):
+    """
+    Un graphe est biparti s'il existe une partition de son ensemble de sommets en deux sous-ensembles U et V telle que chaque arete ait une extremite dans U et l'autre dans V.
+    
+    Pour determiner si un graphe est biparti, on peut utiliser un parcours en profondeur de la maniere suivante:
+    1) colorier les noeuds de niveau pair en rouge et les noeuds de niveau impair en vert.
+    2) si il existe une arete entre des noeuds d'une meme couleur alors le graphe n'est pas biparti. Il l'est sinon.
+    
+    
+    parametre :
+        - graphe : un graphe non-oriente
+            type : dictionnaire de la forme : {('noeud1','noeud2') : poids}
+                    le premier element du tuple est le plus petit noeud dans l'ordre lexicographique
+        
+    return True si le graphe est biparti, False sinon
+        type : bool
+        
+    ex:
+    graphe = {('A', 'F'): 3.0, ('A', 'B'): 1000.0, ('B', 'F'): 4.0, ('C', 'F'): 200.0}
+    estGrapheBiparti(graphe) => False
+    """
+    
+    #realisons le parcrous en profondeur
+    noeudDepart = extraitListNoeuds(graphe)[0] #on prend arbitrairement le premier element
+    parcours = parcoursProfondeur(graphe,noeudDepart)
+    
+    vert = list()
+    rouge = list()
+    
+    #colorions les noeuds
+    for niveau in range(0,len(parcours)):
+        for noeud in parcours[niveau]:
+            if niveau%2==0:#niveau pair
+                rouge.append(noeud)
+            else:
+                vert.append(noeud)
+    
+    #testons s'il existe une arete entre noeuds de meme couleur
+
+    #1) noeud vert
+    for noeud1 in vert:
+        for noeud2 in vert:
+            if noeud1 != noeud2:
+                arete = creerArete(noeud1,noeud2)
+                if graphe.get(arete) is not None:
+                    return False
+    
+    #2) noeud rouge
+    for noeud1 in rouge:
+        for noeud2 in rouge:
+            if noeud1 != noeud2:
+                arete = creerArete(noeud1,noeud2)
+                if graphe.get(arete) is not None:
+                    return False
+    #return True s'il n'y a pas d'arete au sein de noeud de meme couleur
+    return True
+    
+    
+    
+##Algorithme de Flot
+#algorithme de calcul de couplage parfait dans un graphe biparti
+
+
+##Algorithme d'Edmonds
+#algorithme de calcul d'un couplage parfait dans un graphe quelconque

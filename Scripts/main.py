@@ -32,6 +32,9 @@ noeudsImpairs =  selectionNoeudsParite(acm,False) #False car on regrade uniqueme
 #3) calculer le graphe induit par I a partir de graphe
 grapheInduit = extraireSousGraphe(graph,noeudsImpairs)
 
+
+oo = estGrapheBiparti(grapheInduit)
+print(oo)
 #TODO calculer couplage parfait de poids minimum
 #TODO Union de acm et du couplage
 #TODO calculer le tour eulerien
