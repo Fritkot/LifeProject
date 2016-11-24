@@ -313,9 +313,7 @@ def kruskall(graphe):
     return acm
 
 ##Algorithme concernant les graphes biparti
-#TODO écrire un parcours en profondeur d'un graphe
-
-def parcoursProfondeur(graphe, noeudDepart):
+def parcoursEnLargeur(graphe, noeudDepart):
     """
     Parcours en profondeur d'un graphe
     
@@ -377,7 +375,7 @@ def estGrapheBiparti(graphe):
     
     Pour determiner si un graphe est biparti, on peut utiliser un parcours en profondeur de la maniere suivante:
     1) colorier les noeuds de niveau pair en rouge et les noeuds de niveau impair en vert.
-    2) si il existe une arete entre des noeuds d'une meme couleur alors le graphe n'est pas biparti. Il l'est sinon.
+    2) si il existe une arete entre deux noeuds d'une meme couleur alors le graphe n'est pas biparti. Il l'est sinon.
     
     
     parametre :
@@ -388,19 +386,19 @@ def estGrapheBiparti(graphe):
     return True si le graphe est biparti, False sinon
         type : bool
         
-    ex:
+    ex :
     graphe = {('A', 'F'): 3.0, ('A', 'B'): 1000.0, ('B', 'F'): 4.0, ('C', 'F'): 200.0}
     estGrapheBiparti(graphe) => False
     """
     
-    #realisons le parcrous en profondeur
+    #realisons le parcrous en largeur
     noeudDepart = extraitListNoeuds(graphe)[0] #on prend arbitrairement le premier element
-    parcours = parcoursProfondeur(graphe,noeudDepart)
+    parcours = parcoursEnLargeur(graphe,noeudDepart)
     
     vert = list()
     rouge = list()
     
-    #colorions les noeuds
+    #colorions les noeuds de niveau pair en rouge et les noeuds de niveau impair en vert
     for niveau in range(0,len(parcours)):
         for noeud in parcours[niveau]:
             if niveau%2==0:#niveau pair
@@ -415,7 +413,7 @@ def estGrapheBiparti(graphe):
         for noeud2 in vert:
             if noeud1 != noeud2:
                 arete = creerArete(noeud1,noeud2)
-                if graphe.get(arete) is not None:
+                if graphe.get(arete) is not None: #l'arete existe
                     return False
     
     #2) noeud rouge
@@ -423,9 +421,9 @@ def estGrapheBiparti(graphe):
         for noeud2 in rouge:
             if noeud1 != noeud2:
                 arete = creerArete(noeud1,noeud2)
-                if graphe.get(arete) is not None:
+                if graphe.get(arete) is not None: #l'arete existe
                     return False
-    #return True s'il n'y a pas d'arete au sein de noeud de meme couleur
+    #return True s'il n'y a pas d'arete au sein de noeuds de meme couleur
     return True
     
     
