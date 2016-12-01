@@ -195,6 +195,39 @@ def extraireSousGraphe(graphe,listeNoeuds):
                 newGraph[arete] = graphe.get(arete)
     return newGraph
     
+   
+def listeAdjacence(graph):
+    """
+    renvoie la liste d'adjacence du graph passé en paramètre
+    
+    parametre :
+        - graph : un graph non-oriente
+            type : dictionnaire de la forme : {('noeud1','noeud2') : poids}
+                    le premier element du tuple est le plus petit noeud dans l'ordre lexicographique
+                    
+    return : la liste d'adjacence du graph passé en paramètre
+        type :  dictionnaire des noeuds du graph contenant la liste de leurs noeuds adjacents 
+            {'noeud1':[noeud2, noeud4], 'noeud2':[noeud1], 'noeud3':[], 'noeud4':[noeud1]}
+                    
+    ex:
+    graph = {('D', 'E'): 2.0, ('B', 'F'): 4.0, ('A', 'B'): 1000.0, ('C', 'F'): 200.0, ('C', 'E'): 1.0, ('C', 'D'): 300.0, ('B', 'D'): 100.0, ('D', 'F'): 50.0, ('A', 'F'): 3.0}
+    listeAdjacence(graph) => {'A':['B','F'], 'B':['A','D','F'], 'C':['D','E','F'], 'D':['B','C','E','F'], 'E':['C','D'], 'F':['A','B','C','D']}
+    """
+    listeAdj=dict()
+    
+    # Parcours des aretes du graph
+    for arete in graph.keys():
+        # Traitement du noeud de début de l'arete
+        if arete[0] not in listeAdj: # Création de la clef correspondant au noeud si besoin
+            listeAdj[arete[0]] = list()
+        listeAdj[arete[0]].append(arete[1]) # Ajout du noeud relié à la liste
+        # Meme traitement appliqué au noeud de fin de l'arete
+        if arete[1] not in listeAdj:
+            listeAdj[arete[1]] = list()
+        listeAdj[arete[1]].append(arete[0])
+    
+    return listeAdj
+    
     
 ## méthodes pour l'agorithme de l'Union-Find
 
@@ -315,7 +348,7 @@ def kruskall(graphe):
 ##Algorithme concernant les graphes biparti
 def parcoursEnLargeur(graphe, noeudDepart):
     """
-    Parcours en profondeur d'un graphe
+    Parcours en largeur d'un graphe
     
     parametre :
         -graphe : un graphe non-oriente
@@ -327,7 +360,7 @@ def parcoursEnLargeur(graphe, noeudDepart):
     
     ex:
     graphe = {('A', 'F'): 3.0, ('C', 'F'): 200.0, ('A', 'B'): 1000.0, ('B', 'F'): 4.0}
-    parcoursProfondeur(graphe, 'A') => [['A'], ['F', 'B'], ['C'], []]
+    parcoursEnLargeur(graphe, 'A') => [['A'], ['F', 'B'], ['C'], []]
     """    
     listeNoeud = extraitListNoeuds(graphe)
     
@@ -391,7 +424,7 @@ def estGrapheBiparti(graphe):
     estGrapheBiparti(graphe) => False
     """
     
-    #realisons le parcrous en largeur
+    #realisons le parcours en largeur
     noeudDepart = extraitListNoeuds(graphe)[0] #on prend arbitrairement le premier element
     parcours = parcoursEnLargeur(graphe,noeudDepart)
     
@@ -423,10 +456,54 @@ def estGrapheBiparti(graphe):
                 arete = creerArete(noeud1,noeud2)
                 if graphe.get(arete) is not None: #l'arete existe
                     return False
+                    
     #return True s'il n'y a pas d'arete au sein de noeuds de meme couleur
     return True
     
+
+##Algorithme pour arbres eulériens
+# Algorithme de calcul d'un cycle eulérien dans un graphe eulérien
+# NON FINI car plus nécessaire
+def cheminEulerien(graphEulerien):
+    """
+    Un graphe est eulérien si tous les sommets sont de degré pair, i.e. le nombre d'arêtes partant de chaque sommet est pair
     
+    parametre :
+        - graphEulerien : un graphe eulérien non-oriente
+            type : dictionnaire de la forme : {('noeud1','noeud2') : poids}
+                    le premier element du tuple est le plus petit noeud dans l'ordre lexicographique
+        
+    return chemin : un chemin eulérien parcourant le graphe
+        type : liste de sommets
+        
+    ex :
+    graphe = {('A', 'F'): 3.0, ('A', 'B'): 1000.0, ('B', 'C'): 4.0, ('C', 'F'): 200.0}
+    cheminEulerien(graphe) => [A, F, C, B, A]
+    """
+    # Vérification que le graph est eulérien
+    bVerif = True
+    dDegres = calculerDegreNoeuds(graphEulerien)
+    for degre in dDegres.values():
+        if degre % 2 != 0:
+            bVerif = False
+            print('Attention : utilisation d\'un graph non-eulerien dans la fonction \"cheminEulerien\"')
+            break
+    
+    lChemin = list()
+    if bVerif:
+        # Etape 1: construire les listes de noeuds et d'adjacence du graphe
+        dListeAdj = listeAdjacente(graphEulerien)
+        lListeNoeuds = extraitListNoeuds(graphEulerien)
+        
+        # Etape 2: construire un chemin à partir d'un sommet jusqu'à boucler sur lui-même
+        for arete in graphEulerien:
+            
+        
+        # Etape 3: rechercher le sommet où il reste des arêtes et décaler le chemin parcouru s'il existe
+    
+    return lChemin
+    
+
     
 ##Algorithme de Flot
 #algorithme de calcul de couplage parfait dans un graphe biparti
