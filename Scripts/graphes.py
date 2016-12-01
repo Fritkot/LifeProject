@@ -414,7 +414,7 @@ def kruskall(graphe):
             union(noeud1,noeud2,foretVierge)
     return acm
 
-##Algorithme concernant les graphes biparti
+##Algorithmes de parcours de graphs
 def parcoursEnLargeur(graphe, noeudDepart):
     """
     Parcours en largeur d'un graphe
@@ -522,7 +522,7 @@ def parcoursEnProfondeur(graph, noeudDepart):
     
     return parcours
     
-    
+ ##Algorithme concernant les graphes biparti   
 def estGrapheBiparti(graphe):
     """
     Un graphe est biparti s'il existe une partition de son ensemble de sommets en deux sous-ensembles U et V telle que chaque arete ait une extremite dans U et l'autre dans V.
@@ -611,19 +611,8 @@ def cheminEulerien(graphEulerien):
             break
     
     lChemin = list()
-<<<<<<< HEAD
-    # if bVerif:
-    #     # Etape 1: construire les listes de noeuds et d'adjacence du graphe
-    #     dListeAdj = listeAdjacente(graphEulerien)
-    #     lListeNoeuds = extraitListNoeuds(graphEulerien)
-    #     
-    #     # Etape 2: construire un chemin à partir d'un sommet jusqu'à boucler sur lui-même
-    #     for arete in graphEulerien:
-    #         
-    #     
-    #     # Etape 3: rechercher le sommet où il reste des arêtes et décaler le chemin parcouru s'il existe
-=======
     if bVerif:
+        
         # Etape 1: construire les listes de noeuds et d'adjacence du graphe
         dListeAdj = listeAdjacente(graphEulerien)
         lListeNoeuds = extraitListNoeuds(graphEulerien)
@@ -634,7 +623,6 @@ def cheminEulerien(graphEulerien):
         
         # Etape 3: rechercher le sommet où il reste des arêtes et décaler le chemin parcouru s'il existe
     
->>>>>>> f5c958597a3e04cc897020ffa4086c6d95e96629
     return lChemin
     
 
