@@ -1,0 +1,179 @@
+\documentclass[11pt,fleqn,a4paper,final,twoside]{report}
+\usepackage[english, french]{babel} % anglais
+\selectlanguage{french}
+%\usepackage{smfart}
+%\usepackage{frbib}
+%\usepackage{ifthen}
+%\usepackage{array}
+\usepackage{subfigure}
+%\usepackage{french}
+\usepackage[T1]{fontenc}
+%\usepackage{pdflscape,multicol}
+\usepackage{amsmath} % AMS-Paket (fr math. Symbole)
+\usepackage{amssymb} % AMS-Symbole (noch mehr Symbole)
+\usepackage{amsfonts} % Schriften fr doppelt gestrichenes N (nat. Zahlen), usw. und tolles C (Raum der stet. Fkt.)
+\usepackage{mathrsfs} % hmm.. wohl auch irgendein Mathe-Paket?
+\usepackage{fancyhdr} % schne Kopf- und Fuzeilen
+\usepackage[latin1]{inputenc} % Direktes Eingeben von Umlauten und sz.
+\usepackage[cyr]{aeguill}
+%\usepackage{pstricks-add} % Fr Grafiken
+\usepackage{fancybox} % Schne rechteckige Boxen mit abgerundeten Ecken in Grafiken
+%\usepackage[numbers,authoryear]{natbib}
+%\usepackage[nottoc, notlof, notlot]{tocbibind}
+%\usepackage{pst-pdf}
+\usepackage{cancel} % Durchstreichen von Symbolen
+%\usepackage{stmaryrd} % Tolle kaligraphische Buchstaben (script L z.B.)
+\usepackage[pdffitwindow=true,%
+				pdftitle={Rapport de Projet},%
+				pdfauthor={},%
+				pdfsubject={},%
+				%pagebackref=true,%
+				colorlinks=true,%
+				frenchlinks=true,%
+				urlcolor=blue,%
+				%linkcolor=black,%
+				linktocpage=true]{hyperref}
+\usepackage{bbm}
+\usepackage{marvosym}
+\usepackage{textcomp}
+\usepackage[svgnames]{xcolor}
+\usepackage{listings}
+\lstset{frameround=fttt,backgroundcolor=\color{WhiteSmoke}}
+\usepackage{pifont}
+\usepackage{graphicx}
+%\graphicspath{{intro/},{resume/},{MS/},{GF/},{procedure/},{oblig/}}
+%\usepackage[linktocpage=true]{hyperref}
+\urlstyle{rm}
+\usepackage{color}
+\usepackage{tabularx}
+\usepackage[all]{hypcap}
+%\usepackage{calc}
+%\usepackage{colortbl}
+%\usepackage{pdfcolmk}
+%\usepackage{pdfpages}
+%\usepackage{verbatim}
+%\usepackage{listings}
+\usepackage[toc,page]{appendix}
+\usepackage[autolanguage]{numprint}
+\usepackage[french]{minitoc}
+\setcounter{minitocdepth}{1}
+\setcounter{tocdepth}{4}
+%\usepackage{sommaire}
+%\usepackage{xfrac}
+\pagestyle{fancy} % Aktivierung von schnen Kopf- und Fuzeilen
+\setlength{\evensidemargin}{0.5cm} % linker Rand
+\setlength{\oddsidemargin}{0.5cm} % linker Rand
+\setlength{\topmargin}{0cm} % oberer Rand
+\setlength{\headheight}{25.23671pt} % Hhe der Kopfzeile
+\setlength{\headsep}{0.7cm} % Platz zwischen Kopfzeile und Body
+\setlength{\topskip}{0cm} % Oberer Rand des Bodys
+\setlength{\textheight}{24.5cm} % Hhe des Bodys
+\setlength{\textwidth}{16.5cm} % Breite des Bodys
+\setlength{\footskip}{0.8cm} % Platz zwischen Body und Foot
+\setlength{\paperheight}{297mm} % Papierhhe: A4=297mm
+\setlength{\paperwidth}{210mm} % Papierbreite: A4=210mm
+\setlength{\marginparwidth}{0cm} % Rechter Rand fr Randnotizen
+\setlength{\mathindent}{1cm} % Abstand vom li. textwidth-Rand bei langen math. Formeln
+%\usepackage{geometry}
+%\geometry{a4paper, top=2.5cm, bottom=3.5cm, left=2cm, right=2cm, marginparwidth=1.2cm}
+
+\setlength{\voffset}{-1cm} % Schiebt Dokument nach oben
+\setlength{\hoffset}{-0.8cm} % schiebt Dokument nach links
+
+\renewcommand{\headrulewidth}{1pt} % Breite des Striches unter Kopfzeile
+\renewcommand{\footrulewidth}{1pt} % Breite des Striches unter Fuzeile
+\renewcommand{\headwidth}{16.5cm} % Textbreite im Kopf- und Fubereich (sollte mit der Breite des Bodys bereinstimmen)
+%\renewcommand{\thesection}{\Roman{section}}
+%\renewcommand{\thesubsection}{\arabic{subsection})}
+%\renewcommand{\thesubsubsection}{\roman{subsubsection})}
+\lhead{ \textbf{Rapport Projet}  \\} \rhead{\textbf{Voyageur de Commerce}\\} 
+% li. und re. Head-Bereich
+
+\rfoot[A \textsc{F}]{ID: } 
+\lfoot[ID:]{A \textsc{F}}
+\title{\textsc{Rapport de Projet}}
+\author{A \textsc{F} \& R \textsc{G}}
+\date{\today}
+
+%\fancypagestyle{plain}{\fancyhead{}}
+
+\begin{document}
+%\frontmatter
+\maketitle
+
+\include{resume/resume}
+
+
+%\sommaire
+
+%\doparttoc[c]
+\dominitoc[c]
+%\thispagestyle{empty}
+%\setcounter{page}{0}
+%\mainmatter
+%\dominitoc
+%\minitoc
+
+\thispagestyle{plain}
+\cleardoublepage
+
+
+%\renewcommand{\thesection}{\arabic{section}}
+\include{intro/intro}
+%\renewcommand{\thesection}{\thechapter .\arabic{section}}
+
+\cleardoublepage
+\include{GF/gf}
+
+%\thispagestyle{plain}
+\cleardoublepage
+\include{MS/ms}
+
+\cleardoublepage
+\include{CCL/ccl}
+%\chaptermark{Conclusion}
+%\adjustmtc
+
+\renewcommand{\appendixpagename}{Annexes}
+\renewcommand{\appendixtocname}{Annexes}
+\cleardoublepage
+%\phantomsection{}
+%\addcontentsline{toc}{part}{Annexes}
+\part{Annexes}
+\label{part:annexe}
+%\mtcaddpart[Annexes]
+\appendix
+%\appendixpage
+%\addappheadtotoc
+
+%\begin{appendices}
+%\adjustmtc
+%\appendixpage
+
+%\part{Annexes}
+
+%\thispagestyle{plain}
+\cleardoublepage
+\include{procedure/procedure}
+%\includepdf[pages={2-24}]{"procédure outil tci"/"Procédure outil MAJ barèmes".pdf}
+%\backmatter
+%\end{appendices}
+\cleardoublepage
+\include{oblig/oblig}
+%\thispagestyle{plain}
+\cleardoublepage
+
+\nocite{*}
+\bibliographystyle{mabib}
+%\bibliographystyle{apa}
+\phantomsection{}
+\addcontentsline{toc}{part}{Références}
+\bibliography{biblio}
+\adjustmtc
+
+\thispagestyle{plain}
+\cleardoublepage
+\listoffigures
+\cleardoublepage
+\tableofcontents
+\end{document}

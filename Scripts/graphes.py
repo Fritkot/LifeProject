@@ -5,6 +5,75 @@ Cette section va contenir toutes les methodes relatives aux graphes:
     - extraire la liste des noeuds à partir d'un graphe
 """
 
+
+def testEstGrapheComplet(graphe):
+    """
+    test si le graphe est un graphe complet.
+    C'est-a-dire si chaque noeud est connecte a chaque noeud.
+    
+    parametre :
+        graphe : un graphe non-oriente complet
+            type : dictionnaire de la forme : {('noeud1','noeud2') : poids}
+                    le premier element du tuple est le plus petit noeud dans l'ordre lexicographique
+    return True si le graphe est complet, False sinon
+        type: bool
+    
+    """
+    listNoeuds = extraitListNoeuds(graphe)
+    
+    for noeud1 in listNoeuds:
+        for noeud2 in listNoeuds:
+            if noeud1 != noeud2:
+                if graphe.get(creerArete(noeud1,noeud2)) is None:
+                   return False
+    return True #tous les noeuds sont connectes
+    
+    
+    
+    
+
+def testInegaliteTriangulaire(graphe):
+    """
+    regarde si le graphe respecte l'inegalite triangulaire. On suppose le graphe complet.
+    
+    Boucle sur tous les noeuds et verifie pour chaque noeuds que:
+        poids(arete 1-2)<= poids(arete 1-3) + poids(arete 2-3)
+    
+    parametre :
+        graphe : un graphe non-oriente complet
+            type : dictionnaire de la forme : {('noeud1','noeud2') : poids}
+                    le premier element du tuple est le plus petit noeud dans l'ordre lexicographique
+    return True si le graphe respecte l'inegalite triangulaire, False sinon
+        type: bool
+    """
+    bool = True
+    
+    #parcours de tous les noeuds
+    listNoeuds = extraitListNoeuds(graphe)
+    for noeud1 in listNoeuds:
+        for noeud2 in listNoeuds:
+            if noeud1 != noeud2:
+                for noeud3 in listNoeuds:
+                    if noeud3 != noeud1 and noeud3 != noeud2:
+                        areteN12 = creerArete(noeud1,noeud2)
+                        areteN13 = creerArete(noeud1,noeud3)
+                        areteN23 = creerArete(noeud2,noeud3)
+                        
+                        if graphe.get(areteN12) > graphe.get(areteN13)+graphe.get(areteN23):
+                            print("l'arete",areteN12," > arete",areteN13," + arete",areteN23)
+                            return False
+                        if graphe.get(areteN13) > graphe.get(areteN12)+graphe.get(areteN23):
+                            print("l'arete",areteN13," > arete",areteN12," + arete",areteN23)
+                            return False
+                        if graphe.get(areteN23) > graphe.get(areteN13)+graphe.get(areteN12):
+                            print("l'arete",areteN23," > arete",areteN13," + arete",areteN12)
+                            return False
+    return True
+
+
+
+
+
 def creerArete(noeud1,noeud2):
     """
     cree une arete a partir de deux noeuds.
@@ -490,17 +559,16 @@ def cheminEulerien(graphEulerien):
             break
     
     lChemin = list()
-    if bVerif:
-        # Etape 1: construire les listes de noeuds et d'adjacence du graphe
-        dListeAdj = listeAdjacente(graphEulerien)
-        lListeNoeuds = extraitListNoeuds(graphEulerien)
-        
-        # Etape 2: construire un chemin à partir d'un sommet jusqu'à boucler sur lui-même
-        for arete in graphEulerien:
-            
-        
-        # Etape 3: rechercher le sommet où il reste des arêtes et décaler le chemin parcouru s'il existe
-    
+    # if bVerif:
+    #     # Etape 1: construire les listes de noeuds et d'adjacence du graphe
+    #     dListeAdj = listeAdjacente(graphEulerien)
+    #     lListeNoeuds = extraitListNoeuds(graphEulerien)
+    #     
+    #     # Etape 2: construire un chemin à partir d'un sommet jusqu'à boucler sur lui-même
+    #     for arete in graphEulerien:
+    #         
+    #     
+    #     # Etape 3: rechercher le sommet où il reste des arêtes et décaler le chemin parcouru s'il existe
     return lChemin
     
 

@@ -1,0 +1,6 @@
+\select@language {french}
+\select@language {french}
+\select@language {french}
+\contentsline {part}{I\hspace {1em}Annexes}{3}{part.1}
+\contentsline {xpart}{Annexes}{4}{part.1}
+\contentsline {part}{R\'ef\'erences}{5}{section*.1}
