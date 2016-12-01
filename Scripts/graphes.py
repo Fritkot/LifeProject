@@ -345,7 +345,7 @@ def kruskall(graphe):
             union(noeud1,noeud2,foretVierge)
     return acm
 
-##Algorithme concernant les graphes biparti
+##Algorithmes concernant les graphes biparti
 def parcoursEnLargeur(graphe, noeudDepart):
     """
     Parcours en largeur d'un graphe
@@ -400,6 +400,58 @@ def parcoursEnLargeur(graphe, noeudDepart):
     
     return file
     
+    
+    
+def parcoursEnProfondeur(graph, noeudDepart):
+    """
+    Parcours en profondeur d'un graph
+    
+    parametre :
+        -graph : un graph non-oriente
+            type : dictionnaire de la forme : {('noeud1','noeud2') : poids}
+                    le premier element du tuple est le plus petit noeud dans l'ordre lexicographique
+        
+    return liste des noeuds dans l'ordre d'un parcours en profondeur en mode prefixe
+        type : list()
+    
+    ex:
+    graph = {('A', 'F'): 3.0, ('C', 'F'): 200.0, ('A', 'B'): 1000.0, ('B', 'F'): 4.0}
+    parcoursEnProfondeur(graph, 'A') => ['A', 'F', 'B', 'C'] ou ['A', 'F', 'C', 'B']
+            ou ['A', 'B', 'F', 'C'] (en fonction de l'acces memoire aux aretes du graph
+    """    
+    
+    # initialisation des noeuds, aucun noeud n'a encore ete visite
+    estVisite = dict()
+    for node in extraitListNoeuds(graph) : 
+        estVisite[node] = False
+    
+    # creons la pile des noeuds a visiter, initialisee donc par le noeud de depart
+    pile = [noeudDepart]
+    # et la liste du parcours du graph, initialisee vide
+    parcours = list()
+    
+    while len(pile)>0 : # tant que la pile des noeuds a explorer n'est pas vide
+
+        # prenons le noeud du dessus de la pile
+        noeudAExp = pile.pop()
+        
+        # si le noeud n'a pas ete visite, ajouter a la pile ses voisins
+        if not estVisite[noeudAExp]:
+            
+            # ajoutons le noeud au parcours
+            parcours.append(noeudAExp)
+            estVisite[noeudAExp] = True
+            
+            # parcourons les aretes du graph a partir du noeud pour trouver ses voisins
+            for arete in extraireAretesDepuisNoeuds(graph,noeudAExp):
+                
+                # testons quelle extremite de l'arete est le noeud a explorer pour ajouter le voisin et non le noeud en cours d'exploration
+                if arete[0] == noeudAExp:
+                    pile.append(arete[1])
+                else:
+                    pile.append(arete[0])
+    
+    return parcours
     
     
 def estGrapheBiparti(graphe):
@@ -496,7 +548,7 @@ def cheminEulerien(graphEulerien):
         lListeNoeuds = extraitListNoeuds(graphEulerien)
         
         # Etape 2: construire un chemin à partir d'un sommet jusqu'à boucler sur lui-même
-        for arete in graphEulerien:
+        #for arete in graphEulerien:
             
         
         # Etape 3: rechercher le sommet où il reste des arêtes et décaler le chemin parcouru s'il existe
