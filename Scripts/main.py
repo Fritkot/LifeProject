@@ -16,14 +16,22 @@ from graphes import *
 #fichier = '../Inputs/Distances.csv'
 #fichier = '../Inputs/GrapheTestProf.csv'
 fichier = '../Inputs/GrapheInegTriang.csv'
-graphe,listVilles = importDonnéesSources(fichier)
+matriceAdjacence,listVilles = importDonnéesSources(fichier)
+
+#test si la matrice d'adjacence est symétrique
+estSymetrique = testEstSymetrique(matriceAdjacence, listVilles)
+if estSymetrique == False:
+    raise Exception("Le graphe importée par matrice d'adjacence n'est pas symétrique")
+
+#construit le graphe
+graphe = creerGrapheDepuisMatriceAdjacence(matriceAdjacence,listVilles)
 
 #test si le graphe est complet
 estComplet = testEstGrapheComplet(graphe)
 if estComplet == False:
     raise Exception("Le graphe importé n'est pas complet")
 
-
+#test si le 
 #test si le graphe respecte l'inegalite triangulaire
 respecteInegalite = testInegaliteTriangulaire(graphe)
 if respecteInegalite == False:

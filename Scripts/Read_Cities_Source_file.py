@@ -55,10 +55,10 @@ def importDonnéesSources(cheminFichier):
     for ligne in townMatrix.keys():
         for colonne in townMatrix.keys():
             distance = townMatrix[ligne][townList.index(colonne)]
-            if distance <= 0 :
-                continue # si distance = 0, la ville correspond à elle-même
-                         # si distance < 0, il n'y a pas de liaison entre les deux villes
-            graphe[triePlusPetiteVille(ligne,colonne)]=distance
+            # if distance <= 0 :
+            #     continue # si distance = 0, la ville correspond à elle-même
+            #              # si distance < 0, il n'y a pas de liaison entre les deux villes
+            graphe[ligne,colonne]=distance
     #print(graphe[triePlusPetiteVille(townList[0],townList[2])])
     return graphe,townList
 
