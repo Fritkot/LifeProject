@@ -17,6 +17,7 @@ from graphes import *
 #fichier = '../Inputs/GrapheTestProf.csv'
 fichier = '../Inputs/GrapheInegTriang.csv'
 graphe,listVilles = importDonnéesSources(fichier)
+villeDeDepart = listVilles[0]
 
 #test si le graphe est complet
 estComplet = testEstGrapheComplet(graphe)
@@ -35,7 +36,28 @@ if respecteInegalite == False:
 # graine = 1 #on fige la graine pour toujours avoir la même séquence de nb pseudo-aléatoire dans le cadre de tests du code
 # villes = selectionAleaVille(listVilles, nbVilles,graine)
 
+## Algorithme donnant un chemin au pire 2*distance de l'arbre couvrant minimum
+# Calcul de l'arbre couvrant minimum
+acm = kruskall(graphe)
+
+# Parcours en profondeur préfixe de l'arbre couvrant minimum
+cheminDuVoyageur = parcoursEnProfondeur(acm, villeDeDepart)
+
+# Retour à la ville de départ du voyageur
+cheminDuVoyageur.append(villeDeDepart)
+
+# Calcul de la distance
+distanceParcourue = 0
+for i in range(len(cheminDuVoyageur)-1):
+    distanceParcourue += graphe[creerArete(cheminDuVoyageur[i],cheminDuVoyageur[i+1])]
+
+# Affichage des résultats
+print(cheminDuVoyageur)
+print(distanceParcourue)
+
+
 ## algorithme de Kristofides
+'''
 #1)  Calculer un arbre couvrant de poids minimum : acm
 acm = kruskall(graphe)
 
@@ -51,3 +73,4 @@ print(oo)
 #TODO: Union de acm et du couplage
 #TODO: calculer le tour eulerien
 #TODO: en deduire le chemin Hamiltonien
+'''

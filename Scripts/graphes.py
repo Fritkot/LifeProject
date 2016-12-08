@@ -522,7 +522,7 @@ def parcoursEnProfondeur(graph, noeudDepart):
     
     return parcours
     
- ##Algorithme concernant les graphes biparti   
+##Algorithme concernant les graphes biparti   
 def estGrapheBiparti(graphe):
     """
     Un graphe est biparti s'il existe une partition de son ensemble de sommets en deux sous-ensembles U et V telle que chaque arete ait une extremite dans U et l'autre dans V.
