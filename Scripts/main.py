@@ -2,7 +2,7 @@
 from sys import path
 from os import chdir
 
-chdir(path[0])
+chdir(path[1])
 
 ##import des scripts
 from Read_Cities_Source_file import *
@@ -15,9 +15,33 @@ from graphes import *
 #chargement de données sources des villes
 #fichier = '../Inputs/Distances.csv'
 #fichier = '../Inputs/GrapheTestProf.csv'
-fichier = '../Inputs/GrapheInegTriang.csv'
+#fichier = '../Inputs/GrapheInegTriang.csv'
+fichier = '../Inputs/Villes Europe.csv'
 graphe,listVilles = importDonnéesSources(fichier)
-villeDeDepart = listVilles[0]
+
+# Vérification de la possibilité d'avoir un unique chemin couvrant minimum
+egalite = False
+for arete in graphe:    
+    for arete2 in graphe:
+        if arete != arete2:
+            if graphe[arete] == graphe[arete2]:
+                egalite = True
+                break
+# Si tous les poids des arêtes sont différents, alors l'acm est unique
+if not egalite:
+    print("L'arbre couvrant minimum est forcément unique")
+# sinon, on ne peut pas conclure
+else:
+    print("Possibilité d'avoir plusieurs arbres couvrant minimum")
+
+# Sélection par l'utilisateur de la ville de départ
+print(listVilles)
+ville = input("De quelle ville voulez-vous partir ?")
+if not ville in listVilles:
+    print("Cette ville n'est pas dans la liste de départ, vous partirez donc de ", listVilles[0])
+    villeDeDepart = listVilles[0]
+else:
+    villeDeDepart = ville
 
 #test si le graphe est complet
 estComplet = testEstGrapheComplet(graphe)
