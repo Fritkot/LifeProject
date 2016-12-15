@@ -5,7 +5,51 @@ Cette section va contenir toutes les methodes relatives aux graphes:
     - extraire la liste des noeuds à partir d'un graphe
 """
 
+def creerGrapheDepuisMatriceAdjacence(matriceAdjacence,listeNoeuds):
+    """
+    construit un graphe a partir de la matrice d'adjacence
+    
+    parametre :
+        matriceAdjacence :  une matrice d'adjacence representant un graphe non-oriente
+            type : dictionnaire de la forme : {['noeud1','noeud2'] : poids}
+        listeNoeuds : la liste de tous les noeuds du graphe
+            type : list
+    return graphe sous forme d'un dictionnaire
+            type : dictionnaire de la forme : {('noeud1','noeud2') : poids}
+                    le premier element du tuple est le plus petit noeud dans l'ordre lexicographique
+    """
+    graphe = dict()
+    
+    for noeud1 in listeNoeuds:
+        for noeud2 in listeNoeuds:
+            distance = matriceAdjacence[noeud1,noeud2]
+            if distance > 0 : # si 0 => la ville correspond à elle-même
+                            # si <0 => il n'y a pas de connexion entre les deux villes
+                graphe[creerArete(noeud1,noeud2)] = distance
+            
+    return graphe
 
+def testEstSymetrique(matriceAdjacence, listeNoeuds):
+    """
+    test si la matrice d'adjacence est symétrique
+    
+    parametre :
+        matriceAdjacence :  une matrice d'adjacence representant un graphe non-oriente
+            type : dictionnaire de la forme : {['noeud1','noeud2'] : poids}
+        listeNoeuds : la liste de tous les noeuds du graphe
+            type : list
+    return True si la matrice est symetrique, False sinon
+        type : bool
+    """
+    
+    for ligne in listeNoeuds:
+        for colonne in listeNoeuds:
+            if ligne != colonne and matriceAdjacence[ligne,colonne] != matriceAdjacence[colonne,ligne]:
+                return False
+    
+    return True
+    
+    
 def testEstGrapheComplet(graphe):
     """
     test si le graphe est un graphe complet.
