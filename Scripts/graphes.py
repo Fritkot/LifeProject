@@ -310,7 +310,34 @@ def extraireAretesDepuisNoeuds(graphe, noeud):
                 arete.append(ar)
     
     return arete
+
+def extraireGrapheDepuisListeArete(graphe,liste):
+    """
+    extrait un sous-graphe a partir d'une liste d'arete
     
+    parametre :
+        - graphe : un graphe non-oriente
+            type : dictionnaire de la forme : {('noeud1','noeud2') : poids}
+                    le premier element du tuple est le plus petit noeud dans l'ordre lexicographique 
+        - liste : liste des noeuds a extraire du graphe 
+            type : liste
+            ex : ['C', 'E', 'D', 'A', 'B', 'C', 'F', 'C']
+    return un sous-graphe issu de graphe n'ayant comme aretes que les aretes decrites dans liste
+        type :  dictionnaire de la forme : {('noeud1','noeud2') : poids}
+                    le premier element du tuple est le plus petit noeud dans l'ordre lexicographique 
+    
+    ex :
+    
+
+    """
+    
+    newGraphe = dict()
+    
+    for i in range(len(liste)-1):
+        arete = creerArete(liste[i],liste[i+1])
+        newGraphe[arete] = graphe[arete]
+    
+    return newGraphe
    
 def extraireSousGraphe(graphe,listeNoeuds):
     """
@@ -699,7 +726,7 @@ def estGrapheBiparti(graphe):
     return True
     
 
-##Algorithme pour arbres eulériens
+##Algorithme pour graphes eulériens
 # Algorithme de calcul d'un cycle eulérien dans un graphe eulérien
 # NON FINI car plus nécessaire
 def cheminEulerien(graphEulerien):
@@ -801,11 +828,49 @@ def calculerCheminEulerien(graphe):
     noeudDepart = None
     grapheTemp = dict()
     for el in graphe:
-        grapheTemp[el]=graphe[el]
+        if isinstance(graphe[el],list): #cas des graphes à arêtes mutliples
+            grapheTemp[el] = []
+            #on copie chaque élément de la liste de poids pour éviter des effets de bords
+            #dans algorithmeEuclide, il y a une recursivité que enlève des éléments à grapheTemp
+            #avec une copie simple, c'est la référence de la liste qui est affectée à grapheTemp et non ses valeurs.
+            for poids in graphe[el]:
+                grapheTemp[el].append(poids)
+        else:
+            grapheTemp[el]=graphe[el]
         if noeudDepart is None:
             noeudDepart = el[0]
     
     return algorithmeEuclide(grapheTemp,noeudDepart)
+
+## Algorithme pour graphe hamiltonien
+def calculerCycleHamiltonien(cycleEulerien):
+    """
+    Principe :
+    A partir d'un graphe complet qui respecte l'inegalite triangulaire et a partir d'un cycle eulerien, on deduit un cycle Hamiltonien de la maniere suivante :
+        - On parcours le cycle hamiltonien.
+        - Quand on repasse par un noeud par lequel on est deja passe, on saute directement au noeud suivant. Ceci est donne par l'inegalite triangulaire et par la completude du graphe : on sait qu'il existe un chemin de poids plus petit qui relie directement le premier noeud au troisieme noeud. Si on veut aller de A a C en passant par B et qu'on est deja passe par B, on sait qu'il existe une arete reliant A a C qui est plus petit poids que le poids de (A,B)+(B,C).
+    
+    Fait :
+    On itere dans l'ordre le cycle et des que l'on repasse par un noeud deja visite, on ne le prend pas en compte.
+    
+    parametres :
+        - cycleEulerien : liste des noeuds representant le chemin, le dernier noeud est le premier noeud ce qui indique la presence d'un cycle. Un chemin Eulerien est un chemin qui passe une seule fois par toutes les aretes du graphe.
+            type : liste ex: ['C', 'E', 'D', 'A', 'B', 'C', 'F', 'C']
+            
+    return : cycle hamiltonien : un cycle qui passe une et une seule fois par tous les noeuds du graphe passe en parametre.
+        type : liste
+    
+    ex : cycleEulerien = ['C', 'E', 'D', 'A', 'B', 'C', 'F', 'C']
+        calculerCycleHamiltonien(cycleEulerien) => ['C', 'E', 'D', 'A', 'B', 'F', 'C']
+    """
+    cycle = []
+    for noeud in cycleEulerien:
+        if not(noeud in cycle):
+            cycle.append(noeud)
+    
+    #on ajoute le premier noeud pour former le cycle
+    cycle.append(cycleEulerien[0])
+    return cycle
     
     
 ##Algorithme de Couplage

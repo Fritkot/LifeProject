@@ -123,7 +123,7 @@ for i in range(len(cheminDuVoyageur)-1):
 # Affichage des résultats
 print(cheminDuVoyageur)
 print(distanceParcourue)
-print(trieGraphe(acm))
+#print(trieGraphe(acm))
 
 ## algorithme de Kristofides
 
@@ -143,20 +143,17 @@ couplage = couplageNaif(grapheInduit)
 grapheUni = unionDeuxGraphes(acm,couplage)
 
 #6) Calculer un tour eulérien
-cycle = calculerCheminEulerien(grapheUni)
+cycleEulerien = calculerCheminEulerien(grapheUni)
+
 #7) calculer un cycle hamiltonien
+cycleHamiltonien = calculerCycleHamiltonien(cycleEulerien)
 
-# oo = estGrapheBiparti(grapheInduit)
-# print(oo)
-# #TODO: calculer couplage parfait de poids minimum
-# #TODO: Union de acm et du couplage
-# #TODO: calculer le tour eulerien
-# #TODO: en deduire le chemin Hamiltonien
+#8) Construire le sous-graphe représentant le cycle Hamiltonien
+grapheHamiltonien = extraireGrapheDepuisListeArete(graphe,cycleHamiltonien)
 
-oo = estGrapheBiparti(grapheInduit)
-print(oo)
-
-#TODO: calculer couplage parfait de poids minimum
-#TODO: Union de acm et du couplage
-#TODO: calculer le tour eulerien
-#TODO: en deduire le chemin Hamiltonien
+#Calcul de la distance parcourus
+distance = 0
+for arete in grapheHamiltonien:
+    distance += grapheHamiltonien[arete]
+print("distance : ",distance)
+print(cycleHamiltonien)
