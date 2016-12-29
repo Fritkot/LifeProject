@@ -116,7 +116,27 @@ def testInegaliteTriangulaire(graphe):
 
 
 
-
+def autreExtremiteArete(arete, noeud):
+    """
+    renvoie l'autre extremité d'une arete par rapport au noeud passe en parametre
+    
+    parametre :
+        - arete : arete dans laquelle on cherche l'autre extremite
+            type : tuple
+        - noued : premiere extremite de l'arete
+            type : string
+    return l'autre extremite de l'arete ou None si le noeud n'appartient pas a l'arete
+        type : string
+    
+    ex : autreExtremiteArete(creerArete('A','B'),'A') => 'B'
+    """
+    
+    if noeud in arete:
+        if noeud == arete[0]:
+            return arete[1]
+        else:
+            return arete[0]
+    return None
 
 def creerArete(noeud1,noeud2):
     """
@@ -150,7 +170,7 @@ def trieGraphe(graphe,ascendant=True):
             ascendant : indique si le trie est ascendant ou descendant
                 type : booleen
         return : graph trie
-            type : list (si on renvoit un ditionnaire, l'ordre des arretes n'est plus garantie)
+            type : list (si on renvoit un dictionnaire, l'ordre des arretes n'est plus garantie)
             
         ex:
         graphe = {('Berlin', 'Brussels'): 651.62, ('Brussels', 'Hamburg'): 489.76, ('Bucharest', 'Hamburg'): 1544.17, ('Brussels', 'Bucharest'): 1769.69, ('Berlin', 'Rome'): 1181.67, ('Berlin', 'Hamburg'): 254.51, ('Berlin', 'Bucharest'): 1293.4, ('Bucharest', 'Rome'): 1137.38, ('Hamburg', 'Rome'): 1307.51, ('Brussels', 'Rome'): 1171.34}
@@ -195,6 +215,9 @@ def calculerDegreNoeuds(graphe):
     """
     Calcul le degre de chaque noeud du graphe
     
+    Le calcul des degres d'un noeud prend en compte le cas des graphes a aretes multiples
+    Ceci intervient dans l'etape 4 de l'algorithme de Christofides ou des graphes a aretes multiples peuvent etre generes.
+    
     parametre :
         - graphe : un graphe non-oriente
             type : dictionnaire de la forme : {('noeud1','noeud2') : poids}
@@ -218,9 +241,12 @@ def calculerDegreNoeuds(graphe):
             if noeudOrigine != noeudArrivee:
                 #trie lexicographique des noms de noeuds
                 couple = creerArete(noeudOrigine,noeudArrivee)
-                if graphe.get(couple) is not None:
-                    degres[noeudOrigine] += 1
-    
+                poids = graphe.get(couple)
+                if poids is not None:#test si l'arete existe
+                    if isinstance(poids,list): #cas du graphe à arêtes mutliples
+                        degres[noeudOrigine] += len(poids)
+                    else:
+                        degres[noeudOrigine] += 1    
     return degres
 
 
@@ -259,6 +285,8 @@ def extraireAretesDepuisNoeuds(graphe, noeud):
     """
     extrait les aretes adjacente au noeud en parametre
     
+    Le cas des graphes a aretes multiple est pris en compte. (peut-etre produit dans l'etape 4 de l'algorithme de Christofides)
+    
     parametre:
         - graphe : un graphe non-oriente
             type : dictionnaire de la forme : {('noeud1','noeud2') : poids}
@@ -275,7 +303,11 @@ def extraireAretesDepuisNoeuds(graphe, noeud):
     for n in listeNoeuds:
         ar = creerArete(noeud,n)
         if ar in graphe.keys():
-            arete.append(ar)
+            if isinstance(graphe[ar],list): # cas des graphes à arêtes multiples
+                for el in graphe[ar]:
+                    arete.append(ar)
+            else:
+                arete.append(ar)
     
     return arete
     
@@ -307,7 +339,45 @@ def extraireSousGraphe(graphe,listeNoeuds):
             if graphe.get(arete) is not None:
                 newGraph[arete] = graphe.get(arete)
     return newGraph
+
+def unionDeuxGraphes(graphe1,graphe2):
+    """
+    realise l'union des deux graphes en parametres
     
+    si une même arete apparait dans les deux graphes, les deux aretes sont ajoutees.
+    Ceci implique que des aretes multiples peuvent apparaitre.
+    
+    parametre :
+        - graphe1, graphe2 : un graphe non-oriente
+            type : dictionnaire de la forme : {('noeud1','noeud2') : poids}
+                    le premier element du tuple est le plus petit noeud dans l'ordre lexicographique 
+    
+    return : l'union des deux graphes
+            Attention des aretes multiples peuvent apparaitre sous la forme d'un liste de poids plutot que d'une valeur pour le poids de l'arete dans le dictionnaire. ex:  {('C', 'F'): [2.0, 2.0]}
+        type : dictionnaire de la forme : {('noeud1','noeud2') : poids}
+                    le premier element du tuple est le plus petit noeud dans l'ordre lexicographique
+    
+    ex :
+    graphe1 =  {('C', 'F'): 2.0, ('A', 'B'): 2.0, ('C', 'E'): 3.0, ('D', 'E'): 2.0, ('B', 'C'): 2.0}
+    graphe2 = {('C', 'F'): 2.0, ('A', 'D'): 4.0}
+    unionDeuxGraphes(graphe1,graphe2) => {('C', 'E'): 3.0, ('D', 'E'): 2.0, ('C', 'F'): [2.0, 2.0], ('A', 'B'): 2.0, ('A', 'D'): 4.0, ('B', 'C'): 2.0}
+    """
+    
+    graphe = dict()
+    
+    #ajoutons toutes les arêtes du premier graphe
+    for arete in graphe1:
+        graphe[arete] = graphe1[arete]
+    
+    #regardons chaque arête de graphe2 et ajouons les si besoin est
+    for arete in graphe2:
+        if arete in graphe1:
+            graphe[arete] = [graphe1[arete],graphe2[arete]]
+        else:
+            graphe[arete] = graphe2[arete]
+    
+    
+    return graphe
    
 def listeAdjacence(graph):
     """
@@ -498,12 +568,13 @@ def parcoursEnLargeur(graphe, noeudDepart):
         for noeud in file[niveau]:
             for arete in extraireAretesDepuisNoeuds(graphe,noeud):
                 
-                #testons si l'autre extremite de l'arete a deja ete visitee
-                if arete[0] == noeud:
-                    extremite = 1
-                else:
-                    extremite = 0
-                noeudArrivee = arete[extremite]
+                # #testons si l'autre extremite de l'arete a deja ete visitee
+                # if arete[0] == noeud:
+                #     extremite = 1
+                # else:
+                #     extremite = 0
+                # noeudArrivee = arete[extremite]
+                noeudArrivee = autreExtremiteArete(arete,noeud)
                 
                 if estVisite.get(noeudArrivee) == False:
                     estVisite[noeudArrivee] = True
@@ -557,14 +628,16 @@ def parcoursEnProfondeur(graph, noeudDepart):
             
             # parcourons les aretes du graph a partir du noeud pour trouver ses voisins
             for arete in extraireAretesDepuisNoeuds(graph,noeudAExp):
-                
-                # testons quelle extremite de l'arete est le noeud a explorer pour ajouter le voisin et non le noeud en cours d'exploration
-                if arete[0] == noeudAExp:
-                    pile.append(arete[1])
-                else:
-                    pile.append(arete[0])
+                pile.append(autreExtremiteArete(arete,noeudAExp))
+                # # testons quelle extremite de l'arete est le noeud a explorer pour ajouter le voisin et non le noeud en cours d'exploration
+                # if arete[0] == noeudAExp:
+                #     pile.append(arete[1])
+                # else:
+                #     pile.append(arete[0])
     
     return parcours
+    
+    
     
 ##Algorithme concernant les graphes biparti   
 def estGrapheBiparti(graphe):
@@ -641,7 +714,7 @@ def cheminEulerien(graphEulerien):
     return chemin : un chemin eulérien parcourant le graphe
         type : liste de sommets
         
-    ex :
+    ex :²
     graphe = {('A', 'F'): 3.0, ('A', 'B'): 1000.0, ('B', 'C'): 4.0, ('C', 'F'): 200.0}
     cheminEulerien(graphe) => [A, F, C, B, A]
     """
@@ -651,7 +724,7 @@ def cheminEulerien(graphEulerien):
     for degre in dDegres.values():
         if degre % 2 != 0:
             bVerif = False
-            print('Attention : utilisation d\'un graph non-eulerien dans la fonction \"cheminEulerien\"')
+            print('Attention : utilisation d\'un graph non-eulerien dans la fonction "cheminEulerien"')
             break
     
     lChemin = list()
@@ -668,12 +741,127 @@ def cheminEulerien(graphEulerien):
         # Etape 3: rechercher le sommet où il reste des arêtes et décaler le chemin parcouru s'il existe
     
     return lChemin
-    
 
+def algorithmeEuclide(graphe,noeudDepart):
+    """
     
-##Algorithme de Flot
-#algorithme de calcul de couplage parfait dans un graphe biparti
-
+    """
+    parcours = [noeudDepart]
+    
+    aretes = extraireAretesDepuisNoeuds(graphe,noeudDepart)
+    
+    #test si noeudDepart est un noeud isolé
+    if len(aretes) == 0:
+        return parcours
+    else:
+        noeudCourant = noeudDepart
+        estNoeudIsole = False
+        while not(estNoeudIsole):
+            #prenons la première arête partant de noeudCourant
+            areteAdjacente = extraireAretesDepuisNoeuds(graphe,noeudCourant)[0]
+            
+            #cherchons l'autre extrémité de l'arête
+            # if noeudCourant == areteAdjacente[0]:
+            #     noeudAutreExtremite = areteAdjacente[1]
+            # else:
+            #     noeudAutreExtremite = areteAdjacente[0]
+            noeudAutreExtremite = autreExtremiteArete(areteAdjacente,noeudCourant)
+            
+            #supprimons l'arête du graphe
+            if isinstance(graphe[areteAdjacente],list): #cas du graphe à arêtes multiples
+                graphe[areteAdjacente].pop(-1) #retire le dernier élément de la liste des poids
+                if len(graphe[areteAdjacente])==0: #si la liste des poids est nulle => il n'y a plus d'arête
+                    graphe.pop(areteAdjacente) #on retire l'arête du graphe
+            else:
+                graphe.pop(areteAdjacente)
+            
+            noeudCourant = noeudAutreExtremite
+            parcours.append(noeudCourant)
+            
+            if len(extraireAretesDepuisNoeuds(graphe,noeudCourant))==0:
+                estNoeudIsole = True
+    
+    
+    #créons des cycles pour chaque noeud du parcours et concaténons les parcours obtenus
+    chemin = []
+    for element in parcours:
+        cycle = algorithmeEuclide(graphe,element)
+        chemin.extend(cycle)
+    
+    return chemin
+            
+    
+def calculerCheminEulerien(graphe):
+    """
+    
+    """
+    #copions le graphe
+    # et séléctionnons un noeud de départ
+    #Arbitrairement prenons le premier dans le dictionnaire graphe
+    noeudDepart = None
+    grapheTemp = dict()
+    for el in graphe:
+        grapheTemp[el]=graphe[el]
+        if noeudDepart is None:
+            noeudDepart = el[0]
+    
+    return algorithmeEuclide(grapheTemp,noeudDepart)
+    
+    
+##Algorithme de Couplage
+def couplageNaif(graphe):
+    """
+    Test toutes les aretes possible pour trouver un couplage de poids minimum :
+        - démarre par l'arete de poids minimum et ajoute successivement les autres aretes tant 
+        qu'il y a encore des noeuds disponible
+        - si le couplage trouvé n'est pas parfait, on recommence avec l'arete suivante, etc.
+    parametre :
+        graphe : un graphe non-oriente complet
+            type : dictionnaire de la forme : {('noeud1','noeud2') : poids}
+                    le premier element du tuple est le plus petit noeud dans l'ordre lexicographique
+    return : couplage parfait ou None si aucun couplage parfait n'a ete trouve.
+        type : dictionnaire de la forme : {('noeud1','noeud2') : poids}
+            le premier element du tuple est le plus petit noeud dans l'ordre lexicographique
+    
+    ex :
+        graphe ={('A', 'C'): 4.0, ('A', 'F'): 5.0, ('C', 'D'): 3.0, ('C', 'F'): 2.0, ('D', 'F'): 3.0, ('A', 'D'): 4.0}
+        couplageNaif(graphe) => {('C', 'F'): 2.0, ('A', 'D'): 4.0}
+    """
+    #on trie le graphe par poids d'arête croissante
+    grapheTrie = trieGraphe(graphe)
+    
+    #on teste toutes les arêtes on démarrant par celle de poids le plus petit
+    for arete1 in grapheTrie:
+        couplage = dict()
+        noeudsPris = list() #indique si un noeud est déjà untilisé dans un couplage
+        
+        couplage[arete1[0]]=arete1[1]
+        noeudsPris.append(arete1[0][0])
+        noeudsPris.append(arete1[0][1])
+        
+        #on ajoute successivement d'autres arêtes afin de former le couplage parfait
+        for arete2 in grapheTrie:
+            if arete1 != arete2:
+                if not(arete2[0][0] in noeudsPris or arete2[0][1] in noeudsPris):
+                    couplage[arete2[0]]=arete2[1]
+                    noeudsPris.append(arete2[0][0])
+                    noeudsPris.append(arete2[0][1])
+                    
+        
+        #test si le couplage est parfait
+        #le couplage est parfait si chaque noeud est de  dégré 1
+        estParfait = True
+        degres = calculerDegreNoeuds(couplage)
+        for noeud in degres.items(): #de la forme [('Noeud1',degre),('Noeud2',degre)]
+            if noeud[1] != 1: 
+                estParfait = False 
+        
+        if estParfait :
+            return couplage
+    #fin boucle for
+    
+    print("aucun couplage n'a été trouvé")
+    return None #aucun couplage parfait n'a été trouvé
 
 ##Algorithme d'Edmonds
 #algorithme de calcul d'un couplage parfait dans un graphe quelconque

@@ -108,7 +108,7 @@ def selectionAleaVille(villes,nbVille=0,graine=0):
     
     """
     if nbVille > len(villes):
-        raise(InputError('Le nombre de ville a selectionner ne peut exceder le nombre de ville dans la liste de ville a selectionner'))
+        raise(Exception('Le nombre de ville a selectionner ne peut exceder le nombre de ville dans la liste de ville a selectionner'))
     
     if (nbVille == 0) or (nbVille == len(villes)):
         return villes

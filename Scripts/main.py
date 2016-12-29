@@ -16,8 +16,8 @@ from graphes import *
 #chargement de données sources des villes
 #fichier = '../Inputs/Distances.csv'
 #fichier = '../Inputs/GrapheTestProf.csv'
-#fichier = '../Inputs/GrapheInegTriang.csv'
-fichier = '../Inputs/Villes Europe.csv'
+fichier = '../Inputs/GrapheInegTriang.csv'
+#fichier = '../Inputs/Villes Europe.csv'
 graphe,listVilles = importDonnéesSources(fichier)
 
 matriceAdjacence,listVilles = importDonnéesSources(fichier)
@@ -92,16 +92,26 @@ print(cheminDuVoyageur)
 print(distanceParcourue)
 
 
-# ## algorithme de Kristofides
-# #1)  Calculer un arbre couvrant de poids minimum : acm
-# acm = kruskall(graphe)
-# 
-# #2) Calculer l'ensemble I des noeuds de degres impairs de acm
-# noeudsImpairs =  selectionNoeudsParite(acm,False) #False car on regrade uniquement les noeuds impairs
-# 
-# #3) calculer le graphe induit par I a partir de graphe
-# grapheInduit = extraireSousGraphe(graphe,noeudsImpairs)
-# 
+## algorithme de Christofides
+#1)  Calculer un arbre couvrant de poids minimum : acm
+acm = kruskall(graphe)
+
+#2) Calculer l'ensemble I des noeuds de degres impairs del' acm
+noeudsImpairs =  selectionNoeudsParite(acm,False) #False car on regrade uniquement les noeuds impairs
+
+#3) calculer le graphe induit par I a partir de graphe
+grapheInduit = extraireSousGraphe(graphe,noeudsImpairs)
+
+#4) calculer le couplage parfait de poids minimum
+couplage = couplageNaif(grapheInduit)
+
+#5) Union du couplage et de l'arbre couvrant de poids minimum
+grapheUni = unionDeuxGraphes(acm,couplage)
+
+#6) Calculer un tour eulérien
+cycle = calculerCheminEulerien(grapheUni)
+#7) calculer un cycle hamiltonien
+
 # oo = estGrapheBiparti(grapheInduit)
 # print(oo)
 # #TODO: calculer couplage parfait de poids minimum
