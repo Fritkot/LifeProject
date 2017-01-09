@@ -72,6 +72,24 @@ def testEstGrapheComplet(graphe):
                    return False
     return True #tous les noeuds sont connectes
     
+def testEstPair(graphe):
+    """
+    test si tous les noeuds du graphe sont de degré pair
+    
+    parametre :
+        graphe :  un graphe non-oriente
+            type : dictionnaire de la forme : {('noeud1','noeud2') : poids}
+                    le premier element du tuple est le plus petit noeud dans l'ordre lexicographique
+    return True : si le graphe est pair, False sinon
+        type: bool
+    """
+    bool = True
+    
+    for el in calculerDegreNoeuds(graphe).items():
+        if el[1]%2 > 0 :
+            bool = False
+    
+    return bool
     
     
     
@@ -822,6 +840,12 @@ def calculerCheminEulerien(graphe):
     """
     
     """
+    
+    "Test si le graphe est pair"
+    if not(testEstPair(graphe)):
+        raise Exception("Le graphe n'est pas pair")
+    
+    
     #copions le graphe
     # et séléctionnons un noeud de départ
     #Arbitrairement prenons le premier dans le dictionnaire graphe
@@ -831,7 +855,7 @@ def calculerCheminEulerien(graphe):
         if isinstance(graphe[el],list): #cas des graphes à arêtes mutliples
             grapheTemp[el] = []
             #on copie chaque élément de la liste de poids pour éviter des effets de bords
-            #dans algorithmeEuclide, il y a une recursivité que enlève des éléments à grapheTemp
+            #dans algorithmeEuclide, il y a une recursivité qui enlève des éléments à grapheTemp
             #avec une copie simple, c'est la référence de la liste qui est affectée à grapheTemp et non ses valeurs.
             for poids in graphe[el]:
                 grapheTemp[el].append(poids)
