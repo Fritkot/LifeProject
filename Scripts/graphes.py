@@ -45,6 +45,7 @@ def testEstSymetrique(matriceAdjacence, listeNoeuds):
     for ligne in listeNoeuds:
         for colonne in listeNoeuds:
             if ligne != colonne and matriceAdjacence[ligne,colonne] != matriceAdjacence[colonne,ligne]:
+                print("ligne",ligne,"colonne",colonne)
                 return False
     
     return True
@@ -69,6 +70,7 @@ def testEstGrapheComplet(graphe):
         for noeud2 in listNoeuds:
             if noeud1 != noeud2:
                 if graphe.get(creerArete(noeud1,noeud2)) is None:
+                   print("noeud1",noeud1,"noeud2",noeud2)
                    return False
     return True #tous les noeuds sont connectes
     
@@ -900,6 +902,8 @@ def calculerCycleHamiltonien(cycleEulerien):
 ##Algorithme de Couplage
 def couplageNaif(graphe):
     """
+    Construit tous les couplages possible et ne compare que les complet et renvoie le minimal.
+    
     Test toutes les aretes possible pour trouver un couplage de poids minimum :
         - démarre par l'arete de poids minimum et ajoute successivement les autres aretes tant 
         qu'il y a encore des noeuds disponible
@@ -908,7 +912,7 @@ def couplageNaif(graphe):
         graphe : un graphe non-oriente complet
             type : dictionnaire de la forme : {('noeud1','noeud2') : poids}
                     le premier element du tuple est le plus petit noeud dans l'ordre lexicographique
-    return : couplage parfait ou None si aucun couplage parfait n'a ete trouve.
+    return : couplage parfait ou un dictionnaire vide si aucun couplage parfait n'a ete trouve.
         type : dictionnaire de la forme : {('noeud1','noeud2') : poids}
             le premier element du tuple est le plus petit noeud dans l'ordre lexicographique
     
@@ -916,6 +920,9 @@ def couplageNaif(graphe):
         graphe ={('A', 'C'): 4.0, ('A', 'F'): 5.0, ('C', 'D'): 3.0, ('C', 'F'): 2.0, ('D', 'F'): 3.0, ('A', 'D'): 4.0}
         couplageNaif(graphe) => {('C', 'F'): 2.0, ('A', 'D'): 4.0}
     """
+    resultat = dict()
+    poidsResultat = float("inf")
+    
     #on trie le graphe par poids d'arête croissante
     grapheTrie = trieGraphe(graphe)
     
@@ -946,11 +953,69 @@ def couplageNaif(graphe):
                 estParfait = False 
         
         if estParfait :
-            return couplage
+            poids = sum(couplage.values())
+            if poids < poidsResultat:
+                resultat = couplage
+                poidsResultat = poids
     #fin boucle for
-    
-    print("aucun couplage n'a été trouvé")
-    return None #aucun couplage parfait n'a été trouvé
+    return resultat
 
 ##Algorithme d'Edmonds
 #algorithme de calcul d'un couplage parfait dans un graphe quelconque
+
+
+
+##Affiche résultats
+def afficherResultat(cycle1,titre1,cycle2=None,titre2=""):
+    """
+    affiche les cycles hamiltoniens sur une mapmonde.
+    les cycles sont représentés par une liste de ville.
+    parametres:
+        cycle1,cycle2: list des villes a relier entre-elles
+        type: list
+    """
+    import matplotlib.pyplot as plt
+    from mpl_toolkits.basemap import Basemap
+   
+    map = Basemap(projection='merc',llcrnrlat=33,urcrnrlat=65,\
+             llcrnrlon=-15,urcrnrlon=50,lat_ts=20,resolution='c')
+    map.drawcoastlines()
+    map.fillcontinents(color='coral',lake_color='aqua')
+
+    ajoutCycle(plt,map,cycle1)
+    if cycle2 is not None:
+        ajoutCycle(plt,map,cycle2,'red')
+    
+    #créons le titre
+    titre=titre1 + " (en bleu)"
+    if cycle2 is not None:
+        titre += ", "+titre2 +" (en rouge)"
+    plt.title(titre)
+    plt.show()
+    
+def ajoutCycle(plt,map,listVilles,couleur='blue'):
+
+    from geopy.geocoders import Nominatim
+    import math
+    
+    scale = 1
+    geolocator = Nominatim()
+    for index in range(len(listVilles)-1):
+        if listVilles[index]=="Rome": listVilles[index]="Roma"
+        elif listVilles[index+1]=="Rome" : listVilles[index+1]="Roma"
+        
+        #trace entre madrid et londres
+        loc1 = geolocator.geocode(listVilles[index])
+        loc2 = geolocator.geocode(listVilles[index+1])
+        long1,lat1 = map(loc1.longitude,loc1.latitude)
+        
+        map.plot(long1,lat1,marker='o',color=couleur,markersize=int(math.sqrt(10))*scale)
+        plt.text(long1+1000,lat1+1000,listVilles[index])
+        
+        long2,lat2 = map(loc2.longitude,loc2.latitude)
+        map.plot(long2,lat2,label="kkkkk",marker='o',color=couleur,markersize=int(math.sqrt(10))*scale)
+        plt.text(long2+1000,lat2+1000,listVilles[index+1])
+        
+        map.drawgreatcircle(loc1.longitude,loc1.latitude,loc2.longitude,loc2.latitude,linewidth=2,color=couleur)
+
+    

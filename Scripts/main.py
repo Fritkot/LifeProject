@@ -13,16 +13,9 @@ from graphes import *
 ## Chargement des données sources
 #fichier = '../Inputs/Distances.csv'
 #fichier = '../Inputs/GrapheTestProf.csv'
-fichier = '../Inputs/GrapheInegTriang.csv'
-#fichier = '../Inputs/Villes Europe.csv'
+#fichier = '../Inputs/GrapheInegTriang.csv'
+fichier = '../Inputs/Villes Europe.csv'
 
-graphe,listVilles = importDonnéesSources(fichier)
-
-matriceAdjacence,listVilles = importDonnéesSources(fichier)
-
-#test si la matrice d'adjacence est symétrique
-
-#graphe,listVilles = importDonnéesSources(fichier)
 matriceAdjacence,listVilles = importDonnéesSources(fichier)
 
 ## test si la matrice d'adjacence est symétrique
@@ -157,3 +150,7 @@ for arete in grapheHamiltonien:
     distance += grapheHamiltonien[arete]
 print("distance : ",distance)
 print(cycleHamiltonien)
+
+
+## affichage des résultats
+# afficherResultat(cheminDuVoyageur,"Simplifié "+str(distanceParcourue)+"km ",cycleHamiltonien,"Christofides "+str(distance)+"km")
